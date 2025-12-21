@@ -1,0 +1,322 @@
+@page "/JournalTimeline"
+<div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📚 My Journal Timeline</h1>
+            <div class="header-actions">
+                <div class="view-toggle">
+                    <button class="view-btn active">Timeline</button>
+                    <button class="view-btn">Grid</button>
+                    <button class="view-btn">Calendar</button>
+                </div>
+                <a href="#" class="btn btn-primary">+ New Entry</a>
+            </div>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search entries...">
+            </div>
+            
+            <select class="filter-dropdown">
+                <option>All Moods</option>
+                <option>😊 Happy</option>
+                <option>😌 Calm</option>
+                <option>😐 Neutral</option>
+                <option>😔 Reflective</option>
+                <option>😢 Sad</option>
+            </select>
+
+            <select class="filter-dropdown">
+                <option>All Tags</option>
+                <option>Personal</option>
+                <option>Work</option>
+                <option>Travel</option>
+                <option>Goals</option>
+                <option>Gratitude</option>
+            </select>
+
+            <select class="filter-dropdown">
+                <option>This Year</option>
+                <option>This Month</option>
+                <option>Last 7 Days</option>
+                <option>All Time</option>
+            </select>
+        </div>
+
+        <!-- Timeline Container -->
+        <div class="timeline-container">
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value">127</div>
+                    <div class="stat-label">Total Entries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2.4k</div>
+                    <div class="stat-label">Avg Words</div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline">
+                <!-- December 2025 -->
+                <div class="timeline-section">
+                    <div class="timeline-month">
+                        <div class="month-marker"></div>
+                        <span class="month-label">December 2025</span>
+                        <span class="month-count">18 entries</span>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Friday, Dec 20</span>
+                                    <span class="entry-time">8:30 PM</span>
+                                </div>
+                                <span class="entry-mood mood-happy">😊 Happy</span>
+                            </div>
+                            <h3 class="entry-title">Amazing Day at the Beach</h3>
+                            <p class="entry-preview">
+                                Spent the entire day with family at the beach. The weather was perfect, and we had so much fun building sandcastles and swimming. Moments like these remind me...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">family</span>
+                                    <span class="tag">gratitude</span>
+                                    <span class="tag">nature</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Thursday, Dec 19</span>
+                                    <span class="entry-time">11:15 PM</span>
+                                </div>
+                                <span class="entry-mood mood-neutral">😐 Neutral</span>
+                            </div>
+                            <h3 class="entry-title">Project Deadline Reflection</h3>
+                            <p class="entry-preview">
+                                Finally submitted the big project at work. It was stressful but I learned a lot about time management and working under pressure...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">work</span>
+                                    <span class="tag">learning</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Tuesday, Dec 17</span>
+                                    <span class="entry-time">7:45 AM</span>
+                                </div>
+                                <span class="entry-mood mood-calm">😌 Calm</span>
+                            </div>
+                            <h3 class="entry-title">Morning Meditation Success</h3>
+                            <p class="entry-preview">
+                                Completed 30 days of morning meditation! Feeling more centered and calm. This habit has truly transformed my daily routine...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">mindfulness</span>
+                                    <span class="tag">goals</span>
+                                    <span class="tag">wellness</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Sunday, Dec 15</span>
+                                    <span class="entry-time">9:20 PM</span>
+                                </div>
+                                <span class="entry-mood mood-reflective">😔 Reflective</span>
+                            </div>
+                            <h3 class="entry-title">Thoughts on Change</h3>
+                            <p class="entry-preview">
+                                Been thinking a lot about how much things have changed this year. Some changes were hard, but I'm grateful for the growth...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">personal</span>
+                                    <span class="tag">growth</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- November 2025 -->
+                <div class="timeline-section">
+                    <div class="timeline-month">
+                        <div class="month-marker"></div>
+                        <span class="month-label">November 2025</span>
+                        <span class="month-count">22 entries</span>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Friday, Nov 29</span>
+                                    <span class="entry-time">6:30 PM</span>
+                                </div>
+                                <span class="entry-mood mood-happy">😊 Happy</span>
+                            </div>
+                            <h3 class="entry-title">Thanksgiving Reflections</h3>
+                            <p class="entry-preview">
+                                Surrounded by loved ones today. So grateful for family, health, and all the little moments that make life beautiful...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">family</span>
+                                    <span class="tag">gratitude</span>
+                                    <span class="tag">holidays</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Wednesday, Nov 20</span>
+                                    <span class="entry-time">10:00 AM</span>
+                                </div>
+                                <span class="entry-mood mood-calm">😌 Calm</span>
+                            </div>
+                            <h3 class="entry-title">Coffee and Contemplation</h3>
+                            <p class="entry-preview">
+                                Quiet morning at my favorite café. Sometimes the best moments are the simple ones - a good book, warm coffee, and peaceful solitude...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">self-care</span>
+                                    <span class="tag">peace</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Monday, Nov 11</span>
+                                    <span class="entry-time">8:15 PM</span>
+                                </div>
+                                <span class="entry-mood mood-happy">😊 Happy</span>
+                            </div>
+                            <h3 class="entry-title">Career Milestone Achieved</h3>
+                            <p class="entry-preview">
+                                Got the promotion I've been working towards! All those late nights and hard work finally paid off. Feeling proud and motivated...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">work</span>
+                                    <span class="tag">achievement</span>
+                                    <span class="tag">goals</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- October 2025 -->
+                <div class="timeline-section">
+                    <div class="timeline-month">
+                        <div class="month-marker"></div>
+                        <span class="month-label">October 2025</span>
+                        <span class="month-count">25 entries</span>
+                    </div>
+
+                    <div class="timeline-entry">
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div class="entry-date-time">
+                                    <span class="entry-date">Saturday, Oct 26</span>
+                                    <span class="entry-time">5:45 PM</span>
+                                </div>
+                                <span class="entry-mood mood-happy">😊 Happy</span>
+                            </div>
+                            <h3 class="entry-title">Autumn Hike Adventure</h3>
+                            <p class="entry-preview">
+                                The fall colors were absolutely breathtaking today. Hiked the mountain trail and felt so connected to nature...
+                            </p>
+                            <div class="entry-footer">
+                                <div class="entry-tags">
+                                    <span class="tag">nature</span>
+                                    <span class="tag">adventure</span>
+                                    <span class="tag">fitness</span>
+                                </div>
+                                <div class="entry-actions">
+                                    <button class="action-btn" title="Edit">✏️</button>
+                                    <button class="action-btn" title="Share">🔗</button>
+                                    <button class="action-btn" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

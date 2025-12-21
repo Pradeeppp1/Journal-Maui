@@ -1,0 +1,170 @@
+﻿@page "/"
+@layout MainLayout
+<div class="container">
+        <div class="header">
+            <h1>📔 My Journal</h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary">Export</button>
+                <button class="btn btn-primary">+ New Entry</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <aside class="sidebar">
+                <h3>Overview</h3>
+                <div class="stat-card">
+                    <h4>Total Entries</h4>
+                    <p>127</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Current Streak</h4>
+                    <p>12 days</p>
+                </div>
+                <div class="stat-card">
+                    <h4>This Month</h4>
+                    <p>18</p>
+                </div>
+
+                <div class="filter-group">
+                    <h4>Filter by Mood</h4>
+                    <div class="filter-item active">
+                        <span>All Entries</span>
+                        <span>127</span>
+                    </div>
+                    <div class="filter-item">
+                        <span>😊 Happy</span>
+                        <span>68</span>
+                    </div>
+                    <div class="filter-item">
+                        <span>😐 Neutral</span>
+                        <span>42</span>
+                    </div>
+                    <div class="filter-item">
+                        <span>😔 Reflective</span>
+                        <span>17</span>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h4>Categories</h4>
+                    <div class="filter-item">
+                        <span>Personal</span>
+                        <span>54</span>
+                    </div>
+                    <div class="filter-item">
+                        <span>Work</span>
+                        <span>33</span>
+                    </div>
+                    <div class="filter-item">
+                        <span>Travel</span>
+                        <span>21</span>
+                    </div>
+                    <div class="filter-item">
+                        <span>Goals</span>
+                        <span>19</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="content-header">
+                    <h2>Recent Entries</h2>
+                    <input type="text" class="search-bar" placeholder="Search entries...">
+                </div>
+
+                <div class="entries-grid">
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <span class="entry-date">Today, 8:30 PM</span>
+                            <span class="entry-mood mood-happy">😊 Happy</span>
+                        </div>
+                        <h3 class="entry-title">Amazing Day at the Beach</h3>
+                        <p class="entry-preview">
+                            Spent the entire day with family at the beach. The weather was perfect, and we had so much fun building sandcastles and swimming. Moments like these remind me of what truly matters in life.
+                        </p>
+                        <div class="entry-tags">
+                            <span class="tag">family</span>
+                            <span class="tag">gratitude</span>
+                            <span class="tag">nature</span>
+                        </div>
+                    </div>
+
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <span class="entry-date">Yesterday, 11:15 PM</span>
+                            <span class="entry-mood mood-neutral">😐 Neutral</span>
+                        </div>
+                        <h3 class="entry-title">Project Deadline Reflection</h3>
+                        <p class="entry-preview">
+                            Finally submitted the big project at work. It was stressful but I learned a lot about time management and working under pressure. Need to plan better next time.
+                        </p>
+                        <div class="entry-tags">
+                            <span class="tag">work</span>
+                            <span class="tag">learning</span>
+                        </div>
+                    </div>
+
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <span class="entry-date">Dec 17, 7:45 AM</span>
+                            <span class="entry-mood mood-happy">😊 Happy</span>
+                        </div>
+                        <h3 class="entry-title">Morning Meditation Success</h3>
+                        <p class="entry-preview">
+                            Completed 30 days of morning meditation! Feeling more centered and calm. This habit has truly transformed my daily routine and mental clarity.
+                        </p>
+                        <div class="entry-tags">
+                            <span class="tag">mindfulness</span>
+                            <span class="tag">goals</span>
+                            <span class="tag">wellness</span>
+                        </div>
+                    </div>
+
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <span class="entry-date">Dec 15, 9:20 PM</span>
+                            <span class="entry-mood mood-sad">😔 Reflective</span>
+                        </div>
+                        <h3 class="entry-title">Thoughts on Change</h3>
+                        <p class="entry-preview">
+                            Been thinking a lot about how much things have changed this year. Some changes were hard, but I'm grateful for the growth. Sometimes we need to let go to move forward.
+                        </p>
+                        <div class="entry-tags">
+                            <span class="tag">personal</span>
+                            <span class="tag">growth</span>
+                        </div>
+                    </div>
+
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <span class="entry-date">Dec 14, 6:30 PM</span>
+                            <span class="entry-mood mood-happy">😊 Happy</span>
+                        </div>
+                        <h3 class="entry-title">Coffee with an Old Friend</h3>
+                        <p class="entry-preview">
+                            Reconnected with Sarah today after two years. It's amazing how some friendships just pick up right where they left off. We talked for hours about everything.
+                        </p>
+                        <div class="entry-tags">
+                            <span class="tag">friendship</span>
+                            <span class="tag">social</span>
+                        </div>
+                    </div>
+
+                    <div class="entry-card">
+                        <div class="entry-header">
+                            <span class="entry-date">Dec 12, 10:00 AM</span>
+                            <span class="entry-mood mood-neutral">😐 Neutral</span>
+                        </div>
+                        <h3 class="entry-title">Weekend Planning</h3>
+                        <p class="entry-preview">
+                            Making plans for the upcoming weekend. Thinking about starting that book I've been wanting to read and maybe trying out the new hiking trail nearby.
+                        </p>
+                        <div class="entry-tags">
+                            <span class="tag">planning</span>
+                            <span class="tag">hobbies</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>

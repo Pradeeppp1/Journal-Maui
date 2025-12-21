@@ -1,0 +1,290 @@
+
+@page "/Calender"
+ <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📅 Calendar View</h1>
+            <div class="header-actions">
+                <div class="view-toggle">
+                    <a href="#" class="view-btn">Timeline</a>
+                    <a href="#" class="view-btn">Grid</a>
+                    <a href="#" class="view-btn active">Calendar</a>
+                </div>
+                <a href="#" class="btn btn-primary">+ New Entry</a>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Calendar Section -->
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <h2 class="month-year">December 2025</h2>
+                    <div class="calendar-nav">
+                        <a href="#" class="nav-btn">←</a>
+                        <a href="#" class="today-btn">Today</a>
+                        <a href="#" class="nav-btn">→</a>
+                    </div>
+                </div>
+
+                <div class="calendar">
+                    <div class="calendar-weekdays">
+                        <div class="weekday">Sun</div>
+                        <div class="weekday">Mon</div>
+                        <div class="weekday">Tue</div>
+                        <div class="weekday">Wed</div>
+                        <div class="weekday">Thu</div>
+                        <div class="weekday">Fri</div>
+                        <div class="weekday">Sat</div>
+                    </div>
+
+                    <div class="calendar-days">
+                        <!-- Week 1 -->
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">1</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">2</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">3</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">4</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">5</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">6</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">1</div>
+                        </a>
+
+                        <!-- Week 2 -->
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">2</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">3</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">4</div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">5</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-happy"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">6</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">7</div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">8</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-happy"></div>
+                            </div>
+                        </a>
+
+                        <!-- Week 3 -->
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">9</div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">10</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-happy"></div>
+                                <div class="entry-dot mood-calm"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">11</div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">12</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-neutral"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">13</div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">14</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-happy"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">15</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-reflective"></div>
+                            </div>
+                        </a>
+
+                        <!-- Week 4 -->
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">16</div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">17</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-calm"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">18</div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">19</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-neutral"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day has-entry">
+                            <div class="day-number">20</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-happy"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day selected today has-entry">
+                            <div class="day-number">21</div>
+                            <div class="day-entries">
+                                <div class="entry-dot mood-happy"></div>
+                                <div class="entry-dot mood-calm"></div>
+                            </div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">22</div>
+                        </a>
+
+                        <!-- Week 5 -->
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">23</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">24</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">25</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">26</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">27</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">28</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">29</div>
+                        </a>
+
+                        <!-- Week 6 -->
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">30</div>
+                        </a>
+                        <a href="#" class="calendar-day">
+                            <div class="day-number">31</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">1</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">2</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">3</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">4</div>
+                        </a>
+                        <a href="#" class="calendar-day other-month">
+                            <div class="day-number">5</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Selected Day Card -->
+                <div class="sidebar-card">
+                    <div class="selected-day-info">
+                        <div class="selected-date">21</div>
+                        <div class="selected-day-name">Saturday, December 21, 2025</div>
+                    </div>
+
+                    <h3>Entries for this day</h3>
+                    <div class="day-entries-list">
+                        <a href="#" class="entry-item">
+                            <div class="entry-time">8:30 PM</div>
+                            <div class="entry-title-small">Evening Reflections</div>
+                            <span class="entry-mood-indicator">😊 Happy</span>
+                        </a>
+                        <a href="#" class="entry-item">
+                            <div class="entry-time">7:15 AM</div>
+                            <div class="entry-title-small">Morning Gratitude</div>
+                            <span class="entry-mood-indicator">😌 Calm</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Stats Card -->
+                <div class="sidebar-card">
+                    <h3>This Month</h3>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value">18</div>
+                            <div class="stat-label">Entries</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Streak</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">2.1k</div>
+                            <div class="stat-label">Avg Words</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">58%</div>
+                            <div class="stat-label">Days Active</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mood Legend -->
+                <div class="sidebar-card">
+                    <h3>Mood Legend</h3>
+                    <div class="mood-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #28a745;"></div>
+                            <span>😊 Happy</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #17a2b8;"></div>
+                            <span>😌 Calm</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #ffc107;"></div>
+                            <span>😐 Neutral</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #6c757d;"></div>
+                            <span>😔 Reflective</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: #dc3545;"></div>
+                            <span>😢 Sad</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
