@@ -12,12 +12,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>di18gc0nyx</Fingerprint>
-      <Integrity>W8biDx5xIdqKJEV+fNZcLMHlVzP1vyBZZghM2aS3s+Y=</Integrity>
+      <Fingerprint>1wazz2hk3g</Fingerprint>
+      <Integrity>H4PQWOArhZaKEjr7p1wkEdN4LQQ65kkSau7yT17ViHw=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>3288</FileLength>
-      <LastWriteTime>Wed, 17 Dec 2025 17:51:00 GMT</LastWriteTime>
+      <FileLength>3277</FileLength>
+      <LastWriteTime>Fri, 23 Jan 2026 15:54:19 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\app.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\bootstrap\bootstrap.min.css'))">
@@ -60,6 +60,26 @@
       <LastWriteTime>Wed, 17 Dec 2025 17:51:00 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\bootstrap\bootstrap.min.css.map'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\themes.css'))">
+      <SourceType>Package</SourceType>
+      <SourceId>Journal</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>/</BasePath>
+      <RelativePath>css/themes.css</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>jbh46bve7k</Fingerprint>
+      <Integrity>r3IDmkLr8EIiSUJ3TRl3WOcTnMqEd6R/W/iHkZfXhAY=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <FileLength>3757</FileLength>
+      <LastWriteTime>Sat, 24 Jan 2026 09:39:54 GMT</LastWriteTime>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\themes.css'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))">
       <SourceType>Package</SourceType>
       <SourceId>Journal</SourceId>
@@ -72,12 +92,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>6zmcpoador</Fingerprint>
-      <Integrity>UvhMwlZK/utZ46GweMfmFjwRKvgqKwuoXeQtCG/NIMQ=</Integrity>
+      <Fingerprint>sh5bpm43as</Fingerprint>
+      <Integrity>cD4cKL4yd/21mfvqW8IuJi2qyBVJz9vbnyq3NDcahYE=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>817</FileLength>
-      <LastWriteTime>Sun, 21 Dec 2025 09:51:58 GMT</LastWriteTime>
+      <FileLength>5052</FileLength>
+      <LastWriteTime>Sat, 24 Jan 2026 09:38:01 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\index.html'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Journal.styles.css'))">
@@ -92,13 +112,53 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName>ScopedCss</AssetTraitName>
       <AssetTraitValue>ApplicationBundle</AssetTraitValue>
-      <Fingerprint>bog40evurl</Fingerprint>
-      <Integrity>a5VVkSBLKnNu+Pd2zdAKDHiEVkB68l5wXGR0mQ0MCFg=</Integrity>
+      <Fingerprint>7n80lc94qo</Fingerprint>
+      <Integrity>w6BkkaLifjo4Sb5WNd/Cwcg5WWZiyNrtuBIB+sq4DBw=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>41858</FileLength>
-      <LastWriteTime>Sun, 21 Dec 2025 09:51:59 GMT</LastWriteTime>
+      <FileLength>42990</FileLength>
+      <LastWriteTime>Sat, 24 Jan 2026 09:44:57 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\Journal.styles.css'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\analytics.js'))">
+      <SourceType>Package</SourceType>
+      <SourceId>Journal</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>/</BasePath>
+      <RelativePath>js/analytics.js</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>vkgvxuqwue</Fingerprint>
+      <Integrity>UQFHLY5NYR7Cwgfvbg11Jc6aKwTYmSdGG6xLbwed3nU=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <FileLength>3162</FileLength>
+      <LastWriteTime>Sat, 24 Jan 2026 08:14:42 GMT</LastWriteTime>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\analytics.js'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\editor.js'))">
+      <SourceType>Package</SourceType>
+      <SourceId>Journal</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>/</BasePath>
+      <RelativePath>js/editor.js</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>uryn2q12aa</Fingerprint>
+      <Integrity>yom22sa22kB+RwL6Z+W7MWPL76pDBZQNysXgzAue9uc=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <FileLength>1237</FileLength>
+      <LastWriteTime>Sat, 24 Jan 2026 09:37:55 GMT</LastWriteTime>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\editor.js'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>

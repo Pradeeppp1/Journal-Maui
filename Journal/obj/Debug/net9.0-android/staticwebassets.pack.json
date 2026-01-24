@@ -1,23 +1,23 @@
 {
   "Files": [
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/obj/Debug/net9.0-android/scopedcss/bundle/Journal.styles.css",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/obj/Debug/net9.0-android/scopedcss/bundle/Journal.styles.css",
       "PackagePath": "staticwebassets/Journal.styles.css"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/css/app.css",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/css/app.css",
       "PackagePath": "staticwebassets/css/app.css"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css",
       "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css.map",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css.map",
       "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css.map"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/index.html",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/index.html",
       "PackagePath": "staticwebassets/index.html"
     },
     {

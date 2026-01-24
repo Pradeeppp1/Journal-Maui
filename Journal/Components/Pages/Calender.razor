@@ -1,5 +1,4 @@
-
-@page "/Calender"
+@page "/Calendar"
  <div class="container">
         <!-- Header -->
         <div class="header">
@@ -7,7 +6,6 @@
             <div class="header-actions">
                 <div class="view-toggle">
                     <a href="#" class="view-btn">Timeline</a>
-                    <a href="#" class="view-btn">Grid</a>
                     <a href="#" class="view-btn active">Calendar</a>
                 </div>
                 <a href="#" class="btn btn-primary">+ New Entry</a>
@@ -19,10 +17,22 @@
             <!-- Calendar Section -->
             <div class="calendar-section">
                 <div class="calendar-header">
-                    <h2 class="month-year">December 2025</h2>
+                    @code {
+                        private DateTime currentDate = DateTime.Today;
+
+                        private void GoToToday()
+                        {
+                            currentDate = DateTime.Today;
+                        }
+                    }
+                    <h2 class="month-year">@currentDate.ToString("yyyy MMMM dd")</h2>
                     <div class="calendar-nav">
                         <a href="#" class="nav-btn">←</a>
-                        <a href="#" class="today-btn">Today</a>
+
+                        <button class="today-btn" @onclick="GoToToday">
+                            Today
+                        </button>
+
                         <a href="#" class="nav-btn">→</a>
                     </div>
                 </div>

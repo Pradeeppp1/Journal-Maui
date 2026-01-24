@@ -1,24 +1,36 @@
 {
   "Files": [
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/scopedcss/bundle/Journal.styles.css",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/scopedcss/bundle/Journal.styles.css",
       "PackagePath": "staticwebassets/Journal.styles.css"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/css/app.css",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/css/app.css",
       "PackagePath": "staticwebassets/css/app.css"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css",
       "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css.map",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/css/bootstrap/bootstrap.min.css.map",
       "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css.map"
     },
     {
-      "Id": "/Users/pradeepbaral/Documents/C#/Journal/Journal/wwwroot/index.html",
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/css/themes.css",
+      "PackagePath": "staticwebassets/css/themes.css"
+    },
+    {
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/index.html",
       "PackagePath": "staticwebassets/index.html"
+    },
+    {
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/js/analytics.js",
+      "PackagePath": "staticwebassets/js/analytics.js"
+    },
+    {
+      "Id": "/Users/pradeepbaral/Documents/AD/Journal/Journal/wwwroot/js/editor.js",
+      "PackagePath": "staticwebassets/js/editor.js"
     },
     {
       "Id": "obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/staticwebassets/msbuild.Journal.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

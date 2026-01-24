@@ -1,1 +1,1 @@
--v --force --timestamp=none --sign - --entitlements /Users/pradeepbaral/Documents/C#/Journal/Journal/obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/Entitlements.xcent /Users/pradeepbaral/Documents/C#/Journal/Journal/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/Journal.app
+-v --force --timestamp=none --sign - --entitlements /Users/pradeepbaral/Documents/AD/Journal/Journal/obj/Debug/net9.0-maccatalyst/maccatalyst-arm64/Entitlements.xcent /Users/pradeepbaral/Documents/AD/Journal/Journal/bin/Debug/net9.0-maccatalyst/maccatalyst-arm64/Journal.app

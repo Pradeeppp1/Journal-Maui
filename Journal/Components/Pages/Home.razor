@@ -1,170 +1,497 @@
 ﻿@page "/"
 @layout MainLayout
+@inject IJournalService JournalService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
 <div class="container">
-        <div class="header">
-            <h1>📔 My Journal</h1>
-            <div class="header-actions">
-                <button class="btn btn-secondary">Export</button>
-                <button class="btn btn-primary">+ New Entry</button>
-            </div>
+    <div class="welcome-banner">
+        <div class="welcome-content">
+            <h1>@Greeting, Writer ✨</h1>
+            <p>You have a <b>@currentStreak day</b> streak. Keep the momentum going!</p>
         </div>
-
-        <div class="dashboard">
-            <aside class="sidebar">
-                <h3>Overview</h3>
-                <div class="stat-card">
-                    <h4>Total Entries</h4>
-                    <p>127</p>
-                </div>
-                <div class="stat-card">
-                    <h4>Current Streak</h4>
-                    <p>12 days</p>
-                </div>
-                <div class="stat-card">
-                    <h4>This Month</h4>
-                    <p>18</p>
-                </div>
-
-                <div class="filter-group">
-                    <h4>Filter by Mood</h4>
-                    <div class="filter-item active">
-                        <span>All Entries</span>
-                        <span>127</span>
-                    </div>
-                    <div class="filter-item">
-                        <span>😊 Happy</span>
-                        <span>68</span>
-                    </div>
-                    <div class="filter-item">
-                        <span>😐 Neutral</span>
-                        <span>42</span>
-                    </div>
-                    <div class="filter-item">
-                        <span>😔 Reflective</span>
-                        <span>17</span>
-                    </div>
-                </div>
-
-                <div class="filter-group">
-                    <h4>Categories</h4>
-                    <div class="filter-item">
-                        <span>Personal</span>
-                        <span>54</span>
-                    </div>
-                    <div class="filter-item">
-                        <span>Work</span>
-                        <span>33</span>
-                    </div>
-                    <div class="filter-item">
-                        <span>Travel</span>
-                        <span>21</span>
-                    </div>
-                    <div class="filter-item">
-                        <span>Goals</span>
-                        <span>19</span>
-                    </div>
-                </div>
-            </aside>
-
-            <main class="main-content">
-                <div class="content-header">
-                    <h2>Recent Entries</h2>
-                    <input type="text" class="search-bar" placeholder="Search entries...">
-                </div>
-
-                <div class="entries-grid">
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <span class="entry-date">Today, 8:30 PM</span>
-                            <span class="entry-mood mood-happy">😊 Happy</span>
-                        </div>
-                        <h3 class="entry-title">Amazing Day at the Beach</h3>
-                        <p class="entry-preview">
-                            Spent the entire day with family at the beach. The weather was perfect, and we had so much fun building sandcastles and swimming. Moments like these remind me of what truly matters in life.
-                        </p>
-                        <div class="entry-tags">
-                            <span class="tag">family</span>
-                            <span class="tag">gratitude</span>
-                            <span class="tag">nature</span>
-                        </div>
-                    </div>
-
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <span class="entry-date">Yesterday, 11:15 PM</span>
-                            <span class="entry-mood mood-neutral">😐 Neutral</span>
-                        </div>
-                        <h3 class="entry-title">Project Deadline Reflection</h3>
-                        <p class="entry-preview">
-                            Finally submitted the big project at work. It was stressful but I learned a lot about time management and working under pressure. Need to plan better next time.
-                        </p>
-                        <div class="entry-tags">
-                            <span class="tag">work</span>
-                            <span class="tag">learning</span>
-                        </div>
-                    </div>
-
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <span class="entry-date">Dec 17, 7:45 AM</span>
-                            <span class="entry-mood mood-happy">😊 Happy</span>
-                        </div>
-                        <h3 class="entry-title">Morning Meditation Success</h3>
-                        <p class="entry-preview">
-                            Completed 30 days of morning meditation! Feeling more centered and calm. This habit has truly transformed my daily routine and mental clarity.
-                        </p>
-                        <div class="entry-tags">
-                            <span class="tag">mindfulness</span>
-                            <span class="tag">goals</span>
-                            <span class="tag">wellness</span>
-                        </div>
-                    </div>
-
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <span class="entry-date">Dec 15, 9:20 PM</span>
-                            <span class="entry-mood mood-sad">😔 Reflective</span>
-                        </div>
-                        <h3 class="entry-title">Thoughts on Change</h3>
-                        <p class="entry-preview">
-                            Been thinking a lot about how much things have changed this year. Some changes were hard, but I'm grateful for the growth. Sometimes we need to let go to move forward.
-                        </p>
-                        <div class="entry-tags">
-                            <span class="tag">personal</span>
-                            <span class="tag">growth</span>
-                        </div>
-                    </div>
-
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <span class="entry-date">Dec 14, 6:30 PM</span>
-                            <span class="entry-mood mood-happy">😊 Happy</span>
-                        </div>
-                        <h3 class="entry-title">Coffee with an Old Friend</h3>
-                        <p class="entry-preview">
-                            Reconnected with Sarah today after two years. It's amazing how some friendships just pick up right where they left off. We talked for hours about everything.
-                        </p>
-                        <div class="entry-tags">
-                            <span class="tag">friendship</span>
-                            <span class="tag">social</span>
-                        </div>
-                    </div>
-
-                    <div class="entry-card">
-                        <div class="entry-header">
-                            <span class="entry-date">Dec 12, 10:00 AM</span>
-                            <span class="entry-mood mood-neutral">😐 Neutral</span>
-                        </div>
-                        <h3 class="entry-title">Weekend Planning</h3>
-                        <p class="entry-preview">
-                            Making plans for the upcoming weekend. Thinking about starting that book I've been wanting to read and maybe trying out the new hiking trail nearby.
-                        </p>
-                        <div class="entry-tags">
-                            <span class="tag">planning</span>
-                            <span class="tag">hobbies</span>
-                        </div>
-                    </div>
-                </div>
-            </main>
+        <div class="welcome-actions">
+            <button class="btn btn-secondary" @onclick="ToggleAnalytics">
+                <i class="bi bi-graph-up"></i> @(showAnalytics ? "Hide Analytics" : "Show Analytics")
+            </button>
+            @if (hasEntryToday)
+            {
+                <button class="btn btn-success" @onclick="NavigateToTodaysEntry">
+                    <i class="bi bi-pencil-square"></i> Edit Today's Entry
+                </button>
+            }
+            else
+            {
+                <button class="btn btn-primary" @onclick="NavigateToNewEntry">
+                    <span>+</span> New Journal Entry
+                </button>
+            }
         </div>
     </div>
+
+    @if (showAnalytics)
+    {
+        <div class="analytics-container fade-in">
+            <div class="analytics-header">
+                <h3>Insights & Trends</h3>
+                <div class="analytics-filters">
+                    <div class="filter-input">
+                        <label>From</label>
+                        <input type="date" @bind="startDate" />
+                    </div>
+                    <div class="filter-input">
+                        <label>To</label>
+                        <input type="date" @bind="endDate" />
+                    </div>
+                    <button class="btn btn-sm btn-primary" @onclick="LoadAnalytics">Update</button>
+                    <button class="btn btn-sm btn-secondary" @onclick="ExportToPdf">
+                        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="analytics-summary">
+                <div class="summary-card">
+                    <span class="summary-label">Most Frequent Mood</span>
+                    <span class="summary-value">@GetMoodEmoji(analytics.MostFrequentMood) @analytics.MostFrequentMood</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Current Streak</span>
+                    <span class="summary-value">@analytics.CurrentStreak Days 🔥</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Longest Streak</span>
+                    <span class="summary-value">@analytics.LongestStreak Days 🏆</span>
+                </div>
+                <div class="summary-card">
+                    <span class="summary-label">Missed Days</span>
+                    <span class="summary-value">@analytics.MissedDays.Count(d => d >= (startDate ?? DateTime.MinValue) && d <= (endDate ?? DateTime.MaxValue)) ⚠️</span>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div id="moodChart"></div>
+                </div>
+                <div class="chart-card">
+                    <div id="tagChart"></div>
+                </div>
+                <div class="chart-card large">
+                    <div id="wordTrendChart"></div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="header-actions" style="display: none;">
+        <button class="btn btn-secondary" @onclick="ExportEntries">Export</button>
+        <button class="btn btn-primary" @onclick="NavigateToNewEntry">+ New Entry</button>
+    </div>
+
+    <div class="dashboard">
+        <aside class="sidebar">
+            <h3>Overview</h3>
+            <div class="stat-card">
+                <h4>Total Entries</h4>
+                <p>@totalEntries</p>
+            </div>
+            <div class="stat-card">
+                <h4>Current Streak</h4>
+                <p>@currentStreak days</p>
+            </div>
+            <div class="stat-card">
+                <h4>This Month</h4>
+                <p>@thisMonthEntries</p>
+            </div>
+
+            <div class="filter-group">
+                <h4>Filter by Mood</h4>
+                <div class="filter-item @(selectedMood == null ? "active" : "")" @onclick="() => FilterByMood(null)">
+                    <span>All Entries</span>
+                    <span>@totalEntries</span>
+                </div>
+                <div class="filter-item @(selectedMood == "Happy" ? "active" : "")" @onclick='() => FilterByMood("Happy")'>
+                    <span>😊 Happy</span>
+                    <span>@GetMoodCount("Happy")</span>
+                </div>
+                <div class="filter-item @(selectedMood == "Neutral" ? "active" : "")" @onclick='() => FilterByMood("Neutral")'>
+                    <span>😐 Neutral</span>
+                    <span>@GetMoodCount("Neutral")</span>
+                </div>
+                <div class="filter-item @(selectedMood == "Reflective" ? "active" : "")" @onclick='() => FilterByMood("Reflective")'>
+                    <span>😔 Reflective</span>
+                    <span>@GetMoodCount("Reflective")</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h2>Recent Entries</h2>
+                <input type="text" class="search-bar" placeholder="Search entries..." @bind="searchTerm" @bind:after="SearchEntries" />
+            </div>
+
+            @if (isLoading)
+            {
+                <div style="text-align: center; padding: 2rem;">
+                    <p>Loading entries...</p>
+                </div>
+            }
+            else if (!displayedEntries.Any())
+            {
+                <div style="text-align: center; padding: 2rem;">
+                    <p>No entries found. <a href="/JournalEntry" style="color: #1b6ec2;">Create your first entry!</a></p>
+                </div>
+            }
+            else
+            {
+                <div class="entries-grid">
+                    @foreach (var entry in displayedEntries)
+                    {
+                        <div class="entry-card" @onclick="() => ViewEntry(entry.Id)" style="cursor: pointer;">
+                            <div class="entry-header">
+                                <span class="entry-date">@FormatDate(entry.CreatedAt)</span>
+                                <span class="entry-mood mood-@entry.Mood.ToLower()">@GetMoodEmoji(entry.Mood) @entry.Mood</span>
+                            </div>
+                            <h3 class="entry-title">@entry.Title</h3>
+                            <p class="entry-preview">
+                                @GetPreview(entry.Content)
+                            </p>
+                            @if (!string.IsNullOrEmpty(entry.Tags))
+                            {
+                                <div class="entry-tags">
+                                    @foreach (var tag in entry.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                                    {
+                                        <span class="tag">@tag</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </main>
+    </div>
+</div>
+
+@code {
+    private List<JournalDisplayModel> allEntries = new();
+    private List<JournalDisplayModel> displayedEntries = new();
+    private bool isLoading = true;
+    private string searchTerm = string.Empty;
+    private string? selectedMood = null;
+    private int totalEntries = 0;
+    private int currentStreak = 0;
+    private int thisMonthEntries = 0;
+    private string Greeting = "";
+    private AnalyticsDto analytics = new();
+    private DateTime? startDate = DateTime.Today.AddDays(-30);
+    private DateTime? endDate = DateTime.Today;
+    private bool showAnalytics = false;
+    private bool hasEntryToday = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Greeting = GetGreeting();
+        await LoadData();
+        await LoadAnalytics();
+    }
+
+    private string GetGreeting()
+    {
+        var hour = DateTime.Now.Hour;
+        if (hour < 12) return "Good Morning";
+        else if (hour < 17) return "Good Afternoon";
+        else if (hour < 21) return "Good Evening";
+        else return "Good Night";
+    }
+
+    private async Task LoadAnalytics()
+    {
+        var result = await JournalService.GetAnalyticsAsync(startDate, endDate);
+        if (result.Success && result.Data != null)
+        {
+            analytics = result.Data;
+            await RenderCharts();
+        }
+    }
+
+    private async Task RenderCharts()
+    {
+        await Task.Delay(100); // Wait for DOM to update
+        
+        // Mood Distribution
+        if (analytics.MoodDistribution.Any())
+        {
+            await JSRuntime.InvokeVoidAsync("renderPieChart", "moodChart", 
+                analytics.MoodDistribution.Keys.ToList(), 
+                analytics.MoodDistribution.Values.ToList(), 
+                "Mood Distribution");
+        }
+
+        // Tag Usage
+        if (analytics.TagUsage.Any())
+        {
+            await JSRuntime.InvokeVoidAsync("renderBarChart", "tagChart", 
+                analytics.TagUsage.Keys.Take(10).ToList(), 
+                analytics.TagUsage.Values.Take(10).ToList(), 
+                "Top 10 Tags");
+        }
+
+        // Word Count Trends
+        if (analytics.WordCountTrends.Any())
+        {
+            await JSRuntime.InvokeVoidAsync("renderLineChart", "wordTrendChart", 
+                analytics.WordCountTrends.Select(t => t.Date.ToString("yyyy-MM-dd")).ToList(), 
+                analytics.WordCountTrends.Select(t => t.AverageWordCount).ToList(), 
+                "Word Count Trend");
+        }
+    }
+
+    private async Task ToggleAnalytics()
+    {
+        showAnalytics = !showAnalytics;
+        StateHasChanged();
+        if (showAnalytics)
+        {
+            await Task.Delay(200); // Wait for DOM element to be available
+            await RenderCharts();
+        }
+    }
+
+    private async Task ExportToPdf()
+    {
+        try
+        {
+            var result = await JournalService.GetAllEntriesAsync();
+            if (result.Success && result.Data != null)
+            {
+                var filteredEntries = result.Data
+                    .Where(e => e.CreatedAt.Date >= (startDate ?? DateTime.MinValue).Date && 
+                               e.CreatedAt.Date <= (endDate ?? DateTime.MaxValue).Date)
+                    .OrderBy(e => e.CreatedAt)
+                    .ToList();
+
+                if (!filteredEntries.Any())
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "No entries found for the selected date range.");
+                    return;
+                }
+
+                var sb = new System.Text.StringBuilder();
+                sb.Append("<div style='max-width: 800px; margin: 0 auto;'>");
+                sb.Append("<h1 style='color: #1e293b; text-align: center; margin-bottom: 20px;'>My Journal Collection</h1>");
+                sb.Append($"<p style='text-align: center; color: #64748b; margin-bottom: 40px;'>From: {startDate:MMM dd, yyyy} &bull; To: {endDate:MMM dd, yyyy}</p>");
+
+                foreach (var e in filteredEntries)
+                {
+                    sb.Append("<div style='margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;'>");
+                    sb.Append("<div style='display: flex; justify-content: space-between; margin-bottom: 10px;'>");
+                    sb.Append($"<span style='color: #94a3b8; font-weight: 600;'>{e.CreatedAt:dddd, MMM dd, yyyy}</span>");
+                    sb.Append($"<span style='background: #f1f5f9; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem;'>{GetMoodEmoji(e.Mood)} {e.Mood}</span>");
+                    sb.Append("</div>");
+                    sb.Append($"<h2 style='color: #1e293b; margin: 0 0 10px 0;'>{e.Title}</h2>");
+                    sb.Append($"<div style='color: #475569; line-height: 1.5; white-space: pre-wrap;'>{e.Content}</div>");
+
+                    if (!string.IsNullOrEmpty(e.Tags))
+                    {
+                        sb.Append("<div style='margin-top: 10px;'>");
+                        foreach (var tag in e.Tags.Split(','))
+                        {
+                            sb.Append($"<span style='margin-right: 8px; color: #3b82f6; font-size: 0.85rem;'>#{tag.Trim()}</span>");
+                        }
+                        sb.Append("</div>");
+                    }
+                    sb.Append("</div>");
+                }
+                sb.Append("</div>");
+
+                var fileName = $"Journal_Export_{startDate:yyyyMMdd}_{endDate:yyyyMMdd}.pdf";
+                var base64 = await JSRuntime.InvokeAsync<string>("generatePDF", sb.ToString());
+                
+                if (!string.IsNullOrEmpty(base64))
+                {
+                    var bytes = Convert.FromBase64String(base64);
+                    var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+                    await File.WriteAllBytesAsync(filePath, bytes);
+
+                    await Share.RequestAsync(new ShareFileRequest
+                    {
+                        Title = "Export Journal",
+                        File = new ShareFile(filePath)
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Export failed: {ex.Message}");
+        }
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var allResult = await JournalService.GetAllEntriesAsync();
+            if (allResult.Success)
+            {
+                allEntries = allResult.Data ?? new();
+                displayedEntries = allEntries;
+            }
+
+            var totalResult = await JournalService.GetTotalEntriesCountAsync();
+            if (totalResult.Success)
+                totalEntries = totalResult.Data;
+
+            var streakResult = await JournalService.GetCurrentStreakAsync();
+            if (streakResult.Success)
+                currentStreak = streakResult.Data;
+
+            var monthResult = await JournalService.GetThisMonthEntriesCountAsync();
+            if (monthResult.Success)
+                thisMonthEntries = monthResult.Data;
+
+            var todayResult = await JournalService.HasEntryTodayAsync();
+            if (todayResult.Success)
+                hasEntryToday = todayResult.Data;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SearchEntries()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            await ApplyFilters();
+        }
+        else
+        {
+            var result = await JournalService.SearchEntriesAsync(searchTerm);
+            if (result.Success)
+            {
+                displayedEntries = result.Data ?? new();
+                if (selectedMood != null)
+                {
+                    displayedEntries = displayedEntries.Where(e => e.Mood == selectedMood).ToList();
+                }
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task FilterByMood(string? mood)
+    {
+        selectedMood = mood;
+        await ApplyFilters();
+    }
+
+    private async Task ApplyFilters()
+    {
+        if (selectedMood == null)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                displayedEntries = allEntries;
+            }
+            else
+            {
+                var result = await JournalService.SearchEntriesAsync(searchTerm);
+                if (result.Success)
+                    displayedEntries = result.Data ?? new();
+            }
+        }
+        else
+        {
+            var result = await JournalService.GetEntriesByMoodAsync(selectedMood);
+            if (result.Success)
+            {
+                displayedEntries = result.Data ?? new();
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    displayedEntries = displayedEntries.Where(e => e.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || e.Content.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void NavigateToNewEntry()
+    {
+        Navigation.NavigateTo("/JournalEntry");
+    }
+
+    private void NavigateToTodaysEntry()
+    {
+        var todaysEntry = allEntries.FirstOrDefault(e => e.CreatedAt.Date == DateTime.Today);
+        if (todaysEntry != null)
+        {
+            Navigation.NavigateTo($"/JournalEntry?id={todaysEntry.Id}");
+        }
+    }
+
+    private void ViewEntry(int id)
+    {
+        Navigation.NavigateTo($"/JournalEntry?id={id}");
+    }
+
+    private async Task ExportEntries()
+    {
+        try
+        {
+            var result = await JournalService.GetAllEntriesAsync();
+            if (result.Success && result.Data != null)
+            {
+                var entries = result.Data;
+                var exportText = string.Join("\n\n", entries.Select(e => $"Title: {e.Title}\nDate: {e.CreatedAt:yyyy-MM-dd HH:mm}\nMood: {e.Mood}\nTags: {e.Tags}\n\n{e.Content}"));
+                await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", exportText);
+                await JSRuntime.InvokeVoidAsync("alert", "Entries copied to clipboard!");
+            }
+        }
+        catch
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Failed to export entries.");
+        }
+    }
+
+    private string FormatDate(DateTime date)
+    {
+        if (date.Date == DateTime.Today)
+            return $"Today, {date:h:mm tt}";
+        if (date.Date == DateTime.Today.AddDays(-1))
+            return $"Yesterday, {date:h:mm tt}";
+        return $"{date:MMM d, yyyy h:mm tt}";
+    }
+
+    private string GetPreview(string content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+            return string.Empty;
+        var preview = content.Length > 150 ? content.Substring(0, 150) + "..." : content;
+        return preview;
+    }
+
+    private string GetMoodEmoji(string mood)
+    {
+        return mood switch
+        {
+            "Happy" => "😊",
+            "Calm" => "😌",
+            "Neutral" => "😐",
+            "Reflective" => "😔",
+            "Sad" => "😢",
+            _ => "📝"
+        };
+    }
+
+    private int GetMoodCount(string mood)
+    {
+        return allEntries.Count(e => e.Mood == mood);
+    }
+}

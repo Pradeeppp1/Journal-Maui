@@ -1,0 +1,17 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Journal.Models;
+
+public class JournalViewModel
+{
+    [Required(ErrorMessage = "Title is required")]
+    [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
+    public string Title { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Content is required")]
+    public string Content { get; set; } = string.Empty;
+
+    public string Mood { get; set; } = "Neutral";
+
+    public string Tags { get; set; } = string.Empty;
+}

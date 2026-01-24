@@ -1,128 +1,385 @@
 @page "/JournalEntry"
+@layout MainLayout
+@inject IJournalService JournalService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
 <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <a href="#" class="back-button">
-                ← Back to Dashboard
-            </a>
-            <div class="header-actions">
-                <div class="autosave-indicator">
-                    <span class="save-dot"></span>
-                    <span>Auto-saved</span>
-                </div>
-                <button class="btn btn-secondary">Preview</button>
-                <button class="btn btn-primary">Publish Entry</button>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-actions">
+            <div class="autosave-indicator">
+                <span class="save-dot @(isSaved ? "saved" : "unsaved")"></span>
+                <span>@(isSaved ? "Saved" : "Unsaved")</span>
             </div>
-        </div>
-
-        <!-- Main Entry Card -->
-        <div class="entry-card">
-            <!-- Entry Meta -->
-            <div class="entry-meta">
-                <div class="meta-row">
-                    <div class="meta-item">
-                        <label>Date & Time</label>
-                        <div class="date-time-display">
-                            📅 Friday, December 19, 2025 • 8:45 PM
-                        </div>
-                    </div>
-                </div>
-
-                <div class="meta-item">
-                    <label>How are you feeling today?</label>
-                    <div class="mood-selector">
-                        <div class="mood-option">
-                            <span class="mood-emoji">😊</span>
-                            <span class="mood-label">Happy</span>
-                        </div>
-                        <div class="mood-option selected">
-                            <span class="mood-emoji">😌</span>
-                            <span class="mood-label">Calm</span>
-                        </div>
-                        <div class="mood-option">
-                            <span class="mood-emoji">😐</span>
-                            <span class="mood-label">Neutral</span>
-                        </div>
-                        <div class="mood-option">
-                            <span class="mood-emoji">😔</span>
-                            <span class="mood-label">Reflective</span>
-                        </div>
-                        <div class="mood-option">
-                            <span class="mood-emoji">😢</span>
-                            <span class="mood-label">Sad</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Title Section -->
-            <div class="title-section">
-                <input type="text" class="title-input" placeholder="Give your entry a title..." value="">
-            </div>
-
-            <!-- Editor Toolbar -->
-            <div class="editor-toolbar">
-                <button class="toolbar-btn" title="Bold">𝐁</button>
-                <button class="toolbar-btn" title="Italic"><i>𝐼</i></button>
-                <button class="toolbar-btn" title="Underline"><u>𝐔</u></button>
-                <div class="toolbar-divider"></div>
-                <button class="toolbar-btn" title="Heading">H1</button>
-                <button class="toolbar-btn" title="List">☰</button>
-                <button class="toolbar-btn" title="Link">🔗</button>
-                <div class="toolbar-divider"></div>
-                <button class="toolbar-btn" title="Image">🖼️</button>
-                <button class="toolbar-btn" title="Quote">❝</button>
-                <button class="toolbar-btn" title="Code">&lt;/&gt;</button>
-            </div>
-
-            <!-- Content Editor -->
-            <div class="editor-content">
-                <textarea class="content-editor" placeholder="Start writing your thoughts...
-
-What happened today that made you smile?
-What are you grateful for?
-What challenges did you face?
-What did you learn about yourself?"></textarea>
-            </div>
-
-            <!-- Writing Prompts -->
-            <div class="prompts-section">
-                <h4>💡 Need inspiration? Try these prompts:</h4>
-                <div class="prompts-list">
-                    <div class="prompt-chip">What made today special?</div>
-                    <div class="prompt-chip">Three things I'm grateful for</div>
-                    <div class="prompt-chip">A challenge I overcame</div>
-                    <div class="prompt-chip">Something I learned today</div>
-                    <div class="prompt-chip">My goals for tomorrow</div>
-                </div>
-            </div>
-
-            <!-- Tags Section -->
-            <div class="tags-section">
-                <label>Tags</label>
-                <div class="tags-container">
-                    <div class="tag">
-                        personal
-                        <span class="tag-remove">×</span>
-                    </div>
-                    <div class="tag">
-                        growth
-                        <span class="tag-remove">×</span>
-                    </div>
-                    <div class="tag">
-                        mindfulness
-                        <span class="tag-remove">×</span>
-                    </div>
-                </div>
-                <div class="tag-input-wrapper">
-                    <input type="text" class="tag-input" placeholder="Add a tag...">
-                    <button class="add-tag-btn">Add Tag</button>
-                </div>
-            </div>
-
-            <!-- Word Count -->
-            <div class="word-count">
-                0 words • 0 characters
-            </div>
+            <button class="btn btn-secondary" @onclick="PreviewEntry">Preview</button>
+            <button class="btn btn-primary" @onclick="SaveEntry">@(isEditing ? "Update Entry" : "Publish Entry")</button>
         </div>
     </div>
+
+    <!-- Main Entry Card -->
+    <div class="entry-card">
+        <!-- Entry Meta -->
+        <div class="entry-meta">
+            <div class="meta-row">
+                <div class="meta-item">
+                    <label>Date & Time</label>
+                    <div class="date-time-display">
+                        📅 @entry.CreatedAt.ToString("dddd, MMMM dd, yyyy • h:mm tt")
+                    </div>
+                </div>
+            </div>
+
+            <div class="meta-item">
+                <label>How are you feeling today?</label>
+                <div class="mood-selector">
+                    @foreach (var mood in moods)
+                    {
+                        <div class="mood-option @(entry.Mood == mood.Name ? "selected" : "")" 
+                             @onclick="() => SelectMood(mood.Name)">
+                            <span class="mood-emoji">@mood.Emoji</span>
+                            <span class="mood-label">@mood.Name</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Title Section -->
+        <div class="title-section">
+            <input type="text" class="title-input" placeholder="Give your entry a title..." 
+                   @bind="entry.Title" @bind:after="OnContentChanged" />
+        </div>
+
+        <!-- Editor Toolbar Removed (Quill has its own) -->
+
+        <!-- Content Editor -->
+        <div class="editor-content">
+            <div id="quill-editor" style="height: 400px; background: white;"></div>
+        </div>
+
+        <!-- Writing Prompts -->
+        <div class="prompts-section">
+            <h4>💡 Need inspiration? Try these prompts:</h4>
+            <div class="prompts-list">
+                @foreach (var prompt in prompts)
+                {
+                    <div class="prompt-chip" @onclick="() => UsePrompt(prompt)">@prompt</div>
+                }
+            </div>
+        </div>
+
+        <!-- Tags Section -->
+        <div class="tags-section">
+            <label>Tags</label>
+            <div class="tags-container">
+                @foreach (var tag in tags)
+                {
+                    <div class="tag">
+                        @tag
+                        <span class="tag-remove" @onclick="() => RemoveTag(tag)">×</span>
+                    </div>
+                }
+            </div>
+            <div class="tag-input-wrapper">
+                <input type="text" class="tag-input" placeholder="Add a tag..." 
+                       @bind="newTag" @bind:event="oninput" @onkeypress="OnTagKeyPress" />
+                <button class="add-tag-btn" @onclick="AddTag">Add Tag</button>
+            </div>
+        </div>
+
+        <!-- Word Count -->
+        <div class="word-count">
+            @entry.WordCount words • @entry.CharacterCount characters
+        </div>
+    </div>
+</div>
+
+@implements IDisposable
+
+@code {
+    private JournalDisplayModel entry = new() { CreatedAt = DateTime.Now };
+    private List<string> tags = new();
+    private string newTag = string.Empty;
+    private bool isSaved = true;
+    private bool isEditing = false;
+    private System.Threading.Timer? autoSaveTimer;
+    private DotNetObjectReference<JournalEntry>? objRef;
+
+    private readonly List<(string Name, string Emoji)> moods = new()
+    {
+        ("Happy", "😊"),
+        ("Calm", "😌"),
+        ("Neutral", "😐"),
+        ("Reflective", "😔"),
+        ("Sad", "😢")
+    };
+
+    private readonly List<string> prompts = new()
+    {
+        "What made today special?",
+        "Three things I'm grateful for",
+        "A challenge I overcame",
+        "Something I learned today",
+        "My goals for tomorrow"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        objRef = DotNetObjectReference.Create(this);
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        if (uri.Query != null && uri.Query.Contains("id="))
+        {
+            var queryString = uri.Query.TrimStart('?');
+            var parts = queryString.Split('&');
+            foreach (var part in parts)
+            {
+                var keyValue = part.Split('=');
+                if (keyValue.Length == 2 && keyValue[0] == "id" && int.TryParse(keyValue[1], out var id))
+                {
+                    await LoadEntry(id);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            var todayResult = await JournalService.HasEntryTodayAsync();
+            if (todayResult.Success && todayResult.Data)
+            {
+                // Find today's entry and redirect to edit
+                var allEntries = await JournalService.GetAllEntriesAsync();
+                if (allEntries.Success && allEntries.Data != null)
+                {
+                    var todaysEntry = allEntries.Data.FirstOrDefault(e => e.CreatedAt.Date == DateTime.Today);
+                    if (todaysEntry != null)
+                    {
+                        Navigation.NavigateTo($"/JournalEntry?id={todaysEntry.Id}");
+                        return;
+                    }
+                }
+            }
+            entry.CreatedAt = DateTime.Now;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeQuill", "quill-editor", entry.Content);
+            await JSRuntime.InvokeVoidAsync("onQuillContentChanged", objRef);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnEditorContentChanged(string htmlContent)
+    {
+        entry.Content = htmlContent;
+        isSaved = false;
+        UpdateWordCount();
+        StateHasChanged();
+        
+        // Auto-save after 2 seconds of inactivity
+        autoSaveTimer?.Dispose();
+        autoSaveTimer = new System.Threading.Timer(async _ => await AutoSave(), null, 2000, Timeout.Infinite);
+    }
+
+    private async Task LoadEntry(int id)
+    {
+        var result = await JournalService.GetEntryByIdAsync(id);
+        if (result.Success && result.Data != null)
+        {
+            entry = result.Data;
+            isEditing = true;
+            if (!string.IsNullOrEmpty(entry.Tags))
+            {
+                tags = entry.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+            }
+            UpdateWordCount();
+        }
+    }
+
+    private void OnContentChanged()
+    {
+        isSaved = false;
+        UpdateWordCount();
+        StateHasChanged();
+        
+        // Auto-save after 2 seconds of inactivity
+        autoSaveTimer?.Dispose();
+        autoSaveTimer = new System.Threading.Timer(async _ => await AutoSave(), null, 2000, Timeout.Infinite);
+    }
+
+    private async Task AutoSave()
+    {
+        if (!isSaved && !string.IsNullOrWhiteSpace(entry.Title) && !string.IsNullOrWhiteSpace(entry.Content))
+        {
+            entry.Tags = string.Join(", ", tags);
+            var viewModel = new JournalViewModel
+            {
+                Title = entry.Title,
+                Content = entry.Content,
+                Mood = entry.Mood,
+                Tags = entry.Tags
+            };
+
+            if (isEditing)
+            {
+                await JournalService.UpdateEntryAsync(entry.Id, viewModel);
+            }
+            else
+            {
+                var result = await JournalService.CreateEntryAsync(viewModel);
+                if (result.Success && result.Data != null)
+                {
+                    entry.Id = result.Data.Id;
+                    isEditing = true;
+                }
+            }
+            isSaved = true;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task SaveEntry()
+    {
+        // Get latest content from Quill before saving
+        entry.Content = await JSRuntime.InvokeAsync<string>("getQuillContent");
+        
+        if (string.IsNullOrWhiteSpace(entry.Title))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Please enter a title for your entry.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(entry.Content) || entry.Content == "<p><br></p>")
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Please write some content for your entry.");
+            return;
+        }
+
+        entry.Tags = string.Join(", ", tags);
+        var viewModel = new JournalViewModel
+        {
+            Title = entry.Title,
+            Content = entry.Content,
+            Mood = entry.Mood,
+            Tags = entry.Tags
+        };
+        
+        try
+        {
+            if (isEditing)
+            {
+                var result = await JournalService.UpdateEntryAsync(entry.Id, viewModel);
+                if (result.Success)
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", "Entry updated successfully!");
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", $"Error: {result.Message}");
+                    return;
+                }
+            }
+            else
+            {
+                var result = await JournalService.CreateEntryAsync(viewModel);
+                if (result.Success)
+                {
+                    isEditing = true;
+                    await JSRuntime.InvokeVoidAsync("alert", "Entry published successfully!");
+                }
+                else
+                {
+                    await JSRuntime.InvokeVoidAsync("alert", $"Error: {result.Message}");
+                    return;
+                }
+            }
+            isSaved = true;
+            Navigation.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Error saving entry: {ex.Message}");
+        }
+    }
+
+    private async Task PreviewEntry()
+    {
+        var markdown = await JSRuntime.InvokeAsync<string>("getQuillMarkdown");
+        var preview = $"Title: {entry.Title}\n\nDate: {entry.CreatedAt:yyyy-MM-dd HH:mm}\nMood: {entry.Mood}\nTags: {string.Join(", ", tags)}\n\n--- MARKDOWN ---\n\n{markdown}";
+        await JSRuntime.InvokeVoidAsync("alert", preview);
+    }
+
+    private async Task SelectMood(string moodName)
+    {
+        entry.Mood = moodName;
+        OnContentChanged();
+    }
+
+    private async Task UsePrompt(string prompt)
+    {
+        var currentContent = await JSRuntime.InvokeAsync<string>("getQuillContent");
+        var newContent = string.IsNullOrEmpty(currentContent) || currentContent == "<p><br></p>" 
+            ? $"<p><strong>{prompt}</strong></p><p><br></p>" 
+            : $"{currentContent}<p><br></p><p><strong>{prompt}</strong></p><p><br></p>";
+        
+        await JSRuntime.InvokeVoidAsync("setQuillContent", newContent);
+        entry.Content = newContent;
+        OnContentChanged();
+    }
+
+    private void AddTag()
+    {
+        if (!string.IsNullOrWhiteSpace(newTag) && !tags.Contains(newTag.Trim(), StringComparer.OrdinalIgnoreCase))
+        {
+            tags.Add(newTag.Trim());
+            newTag = string.Empty;
+            OnContentChanged();
+        }
+    }
+
+    private void RemoveTag(string tag)
+    {
+        tags.Remove(tag);
+        OnContentChanged();
+    }
+
+    private void OnTagKeyPress(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddTag();
+        }
+    }
+
+    private void UpdateWordCount()
+    {
+        if (string.IsNullOrWhiteSpace(entry.Content))
+        {
+            entry.WordCount = 0;
+            entry.CharacterCount = 0;
+            return;
+        }
+
+        // Simple HTML tag removal for counting
+        var plainText = System.Text.RegularExpressions.Regex.Replace(entry.Content, "<.*?>", string.Empty);
+        entry.WordCount = CountWords(plainText);
+        entry.CharacterCount = plainText.Length;
+    }
+
+    private int CountWords(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return 0;
+        return text.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
+    }
+
+    public void Dispose()
+    {
+        autoSaveTimer?.Dispose();
+        objRef?.Dispose();
+    }
+}

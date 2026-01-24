@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/pradeepbaral/Documents/C#/Journal/Journal/Journal.csproj": {}
+    "/Users/pradeepbaral/Documents/AD/Journal/Journal/Journal.csproj": {}
   },
   "projects": {
-    "/Users/pradeepbaral/Documents/C#/Journal/Journal/Journal.csproj": {
+    "/Users/pradeepbaral/Documents/AD/Journal/Journal/Journal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/pradeepbaral/Documents/C#/Journal/Journal/Journal.csproj",
+        "projectUniqueName": "/Users/pradeepbaral/Documents/AD/Journal/Journal/Journal.csproj",
         "projectName": "Journal",
-        "projectPath": "/Users/pradeepbaral/Documents/C#/Journal/Journal/Journal.csproj",
+        "projectPath": "/Users/pradeepbaral/Documents/AD/Journal/Journal/Journal.csproj",
         "packagesPath": "/Users/pradeepbaral/.nuget/packages/",
-        "outputPath": "/Users/pradeepbaral/Documents/C#/Journal/Journal/obj/",
+        "outputPath": "/Users/pradeepbaral/Documents/AD/Journal/Journal/obj/",
         "projectStyle": "PackageReference",
         "crossTargeting": true,
         "configFilePaths": [
@@ -59,6 +59,14 @@
             "Microsoft.AspNetCore.Components.WebView.Maui": {
               "target": "Package",
               "version": "[9.0.120, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             },
             "Microsoft.Extensions.Logging.Debug": {
               "target": "Package",
@@ -109,6 +117,14 @@
               "target": "Package",
               "version": "[9.0.120, )"
             },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Microsoft.Extensions.Logging.Debug": {
               "target": "Package",
               "version": "[9.0.9, )"
@@ -157,6 +173,14 @@
             "Microsoft.AspNetCore.Components.WebView.Maui": {
               "target": "Package",
               "version": "[9.0.120, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "target": "Package",
+              "version": "[9.0.0, )"
             },
             "Microsoft.Extensions.Logging.Debug": {
               "target": "Package",

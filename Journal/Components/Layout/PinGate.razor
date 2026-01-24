@@ -1,0 +1,117 @@
+@inject ISecurityService SecurityService
+@inject NavigationManager Navigation
+
+@if (isChecking)
+{
+    <div class="pin-loading">
+        <div class="spinner"></div>
+    </div>
+}
+else if (showPinEntry)
+{
+    <div class="pin-overlay">
+        <div class="pin-container">
+            <div class="pin-header">
+                <div class="pin-icon">🔒</div>
+                <h2>Secure Journal</h2>
+                <p>Please enter your 4-digit PIN</p>
+            </div>
+
+            <div class="pin-display">
+                @for (int i = 0; i < 4; i++)
+                {
+                    <div class="pin-dot @(pin.Length > i ? "filled" : "")"></div>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="pin-error">@errorMessage</div>
+            }
+
+            <div class="pin-keypad">
+                @for (int i = 1; i <= 9; i++)
+                {
+                    var digit = i.ToString();
+                    <button class="key-btn" @onclick="() => AppendDigit(digit)">@i</button>
+                }
+                <button class="key-btn special" @onclick="ClearPin">C</button>
+                <button class="key-btn" @onclick='() => AppendDigit("0")'>0</button>
+                <button class="key-btn special" @onclick="Backspace">⌫</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private string pin = "";
+    private string errorMessage = "";
+    private bool showPinEntry = false;
+    private bool isChecking = true;
+
+    protected override void OnInitialized()
+    {
+        CheckStatus();
+    }
+
+    private void CheckStatus()
+    {
+        if (SecurityService.IsPinSet() && !SecurityService.IsAuthenticated)
+        {
+            showPinEntry = true;
+        }
+        else
+        {
+            showPinEntry = false;
+        }
+        isChecking = false;
+    }
+
+    private void AppendDigit(string digit)
+    {
+        if (pin.Length < 4)
+        {
+            pin += digit;
+            errorMessage = "";
+
+            if (pin.Length == 4)
+            {
+                Verify();
+            }
+        }
+    }
+
+    private void Backspace()
+    {
+        if (pin.Length > 0)
+        {
+            pin = pin.Substring(0, pin.Length - 1);
+        }
+    }
+
+    private void ClearPin()
+    {
+        pin = "";
+    }
+
+    private void Verify()
+    {
+        if (SecurityService.VerifyPin(pin))
+        {
+            SecurityService.IsAuthenticated = true;
+            showPinEntry = false;
+            StateHasChanged();
+        }
+        else
+        {
+            pin = "";
+            errorMessage = "Incorrect PIN. Please try again.";
+        }
+    }
+}
