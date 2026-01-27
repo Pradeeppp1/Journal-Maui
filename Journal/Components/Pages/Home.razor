@@ -311,15 +311,8 @@
                 
                 if (!string.IsNullOrEmpty(base64))
                 {
-                    var bytes = Convert.FromBase64String(base64);
-                    var filePath = Path.Combine(FileSystem.CacheDirectory, fileName);
-                    await File.WriteAllBytesAsync(filePath, bytes);
-
-                    await Share.RequestAsync(new ShareFileRequest
-                    {
-                        Title = "Export Journal",
-                        File = new ShareFile(filePath)
-                    });
+                    await JSRuntime.InvokeVoidAsync("downloadFile", fileName, base64);
+                    await JSRuntime.InvokeVoidAsync("alert", "PDF generated! Check your Downloads folder.");
                 }
             }
         }
@@ -473,8 +466,13 @@
     {
         if (string.IsNullOrWhiteSpace(content))
             return string.Empty;
-        var preview = content.Length > 150 ? content.Substring(0, 150) + "..." : content;
-        return preview;
+        
+        // Remove HTML tags
+        var plainText = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
+        // Decode common HTML entities
+        plainText = System.Web.HttpUtility.HtmlDecode(plainText);
+        
+        return plainText.Length > 150 ? plainText.Substring(0, 150) + "..." : plainText;
     }
 
     private string GetMoodEmoji(string mood)

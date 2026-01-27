@@ -8,6 +8,8 @@ public class UserProfile
     public string Username { get; set; } = string.Empty;
     public string Bio { get; set; } = string.Empty;
     public string ProfilePictureUrl { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
     public bool IsDarkMode { get; set; }
     public bool IsCompactView { get; set; }
+    public string Pin { get; set; } = string.Empty;
 }

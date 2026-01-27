@@ -1,0 +1,29 @@
+@using Journal.Services
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+@if (AuthService.IsAuthenticated)
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            var currentPath = Navigation.ToBaseRelativePath(Navigation.Uri);
+            /* Check if the current path contains Login or Register to avoid infinite loops 
+               or redirecting when already on the auth pages. 
+               Note: This rudimentary check might be too broad if URLs contain "Login" 
+               as a substring in other contexts, but it matches the original intent. */
+            if (!currentPath.Contains("Login", StringComparison.OrdinalIgnoreCase) && 
+                !currentPath.Contains("Register", StringComparison.OrdinalIgnoreCase))
+            {
+                Navigation.NavigateTo("/Login");
+            }
+        }
+    }
+}

@@ -88,9 +88,9 @@
 
 /* Calendar Section */
 .calendar-section {
-    background: white;
+    background: var(--card-bg);
     border-radius: 1.5rem;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-color);
     padding: 2rem;
 }
 
@@ -242,9 +242,9 @@
 }
 
 .sidebar-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 1.5rem;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-color);
     padding: 1.5rem;
 }
 
@@ -287,9 +287,9 @@
 
 .entry-item {
     padding: 1rem;
-    background: #f8fafc;
+    background: var(--secondary-bg);
     border-radius: 1rem;
-    border-left: 4px solid #3b82f6;
+    border-left: 4px solid var(--primary-color);
     cursor: pointer;
     transition: all 0.2s ease;
     text-decoration: none;
@@ -322,10 +322,10 @@
     gap: 0.375rem;
     font-size: 0.75rem;
     font-weight: 600;
-    background: white;
+    background: var(--card-bg);
     padding: 0.25rem 0.625rem;
     border-radius: 9999px;
-    border: 1px solid #f1f5f9;
+    border: 1px solid var(--border-color);
 }
 
 /* Stats Card */
@@ -338,7 +338,7 @@
 .stat-box {
     text-align: center;
     padding: 1rem;
-    background: #f8fafc;
+    background: var(--secondary-bg);
     border-radius: 0.75rem;
 }
 

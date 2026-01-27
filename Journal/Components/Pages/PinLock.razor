@@ -1,0 +1,128 @@
+@page "/PinLock"
+@layout EmptyLayout
+@using Journal.Services
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+<div class="pin-container">
+    <div class="pin-content fade-in">
+        <div class="icon-lock">🔐</div>
+        <h1>@(isSettingPin ? "Create PIN" : "Enter PIN")</h1>
+        <p>@(isSettingPin ? "Set a 4-digit PIN for quick access" : "Enter your 4-digit session PIN")</p>
+
+        <div class="pin-display">
+            @foreach (var i in Enumerable.Range(0, 4))
+            {
+                <div class="pin-dot @(pin.Length > i ? "filled" : "")"></div>
+            }
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-msg">@errorMessage</div>
+        }
+
+        <div class="keypad">
+            @for (int i = 1; i <= 9; i++)
+            {
+                var num = i;
+                <button class="key-btn" @onclick="() => AppendDigit(num)">@num</button>
+            }
+            <button class="key-btn action" @onclick="Clear">C</button>
+            <button class="key-btn" @onclick="() => AppendDigit(0)">0</button>
+            <button class="key-btn action" @onclick="Delete"><i class="bi bi-backspace"></i></button>
+        </div>
+        
+        @if (!isSettingPin)
+        {
+            <div class="mt-4 text-center">
+                <button class="btn-link" @onclick="Logout">Switch Account / Logout</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string pin = "";
+    private string errorMessage = "";
+    private bool isSettingPin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/Login", true);
+            return;
+        }
+
+        bool hasPin = await AuthService.HasPinAsync();
+        isSettingPin = !hasPin;
+    }
+
+    private async Task AppendDigit(int digit)
+    {
+        if (pin.Length < 4)
+        {
+            pin += digit.ToString();
+            if (pin.Length == 4)
+            {
+                await SubmitPin();
+            }
+        }
+    }
+
+    private void Delete()
+    {
+        if (pin.Length > 0)
+        {
+            pin = pin.Substring(0, pin.Length - 1);
+            errorMessage = "";
+        }
+    }
+    
+    private void Clear()
+    {
+        pin = "";
+        errorMessage = "";
+    }
+
+    private async Task SubmitPin()
+    {
+        await Task.Delay(200); // Visual feedback
+
+        if (isSettingPin)
+        {
+            // For creating PIN, we might want a confirmation step, but for simplicity:
+            var success = await AuthService.SetPinAsync(pin);
+            if (success)
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                errorMessage = "Failed to set PIN.";
+                pin = "";
+            }
+        }
+        else
+        {
+            var isValid = await AuthService.VerifyPinAsync(pin);
+            if (isValid)
+            {
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                errorMessage = "Incorrect PIN";
+                pin = "";
+                // Haptic feedback could be added here
+            }
+        }
+    }
+    
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        Navigation.NavigateTo("/Login", true);
+    }
+}

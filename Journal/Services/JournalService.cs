@@ -9,18 +9,25 @@ namespace Journal.Services;
 public class JournalService : IJournalService
 {
     private readonly JournalDbContext _context;
+    private readonly IAuthService _authService;
 
-    public JournalService(JournalDbContext context)
+    public JournalService(JournalDbContext context, IAuthService authService)
     {
         _context = context;
+        _authService = authService;
     }
 
-    public async Task<ServiceResult<List<JournalDisplayModel>>> GetAllEntriesAsync()
+    private int CurrentUserId => _authService.CurrentUserId ?? -1;
+
+    public async Task<ServiceResult<List<JournalDisplayModel>>> GetAllEntriesAsync(int page = 1, int pageSize = 10)
     {
         try
         {
             var entries = await _context.JournalEntries
+                .Where(e => e.UserId == CurrentUserId)
                 .OrderByDescending(e => e.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .Select(e => new JournalDisplayModel
                 {
                     Id = e.Id,
@@ -28,6 +35,7 @@ public class JournalService : IJournalService
                     Content = e.Content,
                     CreatedAt = e.CreatedAt,
                     Mood = e.Mood,
+                    SecondaryMoods = e.SecondaryMoods,
                     Tags = e.Tags,
                     WordCount = e.WordCount,
                     CharacterCount = e.CharacterCount
@@ -45,7 +53,8 @@ public class JournalService : IJournalService
     {
         try
         {
-            var entry = await _context.JournalEntries.FindAsync(id);
+            var entry = await _context.JournalEntries
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == CurrentUserId);
             if (entry == null) return ServiceResult<JournalDisplayModel>.FailureResult("Entry not found");
             return ServiceResult<JournalDisplayModel>.SuccessResult(MapToDisplayModel(entry));
         }
@@ -61,7 +70,7 @@ public class JournalService : IJournalService
         {
             var today = DateTime.Today;
             var existingEntry = await _context.JournalEntries
-                .AnyAsync(e => e.CreatedAt.Date == today);
+                .AnyAsync(e => e.CreatedAt.Date == today && e.UserId == CurrentUserId);
 
             if (existingEntry)
             {
@@ -73,11 +82,13 @@ public class JournalService : IJournalService
                 Title = model.Title,
                 Content = model.Content,
                 Mood = model.Mood,
+                SecondaryMoods = model.SecondaryMoods,
                 Tags = model.Tags,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 WordCount = CountWords(model.Content),
-                CharacterCount = model.Content.Length
+                CharacterCount = model.Content.Length,
+                UserId = CurrentUserId
             };
 
             _context.JournalEntries.Add(entry);
@@ -94,12 +105,14 @@ public class JournalService : IJournalService
     {
         try
         {
-            var entry = await _context.JournalEntries.FindAsync(id);
+            var entry = await _context.JournalEntries
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == CurrentUserId);
             if (entry == null) return ServiceResult<JournalDisplayModel>.FailureResult("Entry not found");
 
             entry.Title = model.Title;
             entry.Content = model.Content;
             entry.Mood = model.Mood;
+            entry.SecondaryMoods = model.SecondaryMoods;
             entry.Tags = model.Tags;
             entry.UpdatedAt = DateTime.Now;
             entry.WordCount = CountWords(model.Content);
@@ -119,7 +132,8 @@ public class JournalService : IJournalService
     {
         try
         {
-            var entry = await _context.JournalEntries.FindAsync(id);
+            var entry = await _context.JournalEntries
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == CurrentUserId);
             if (entry == null) return ServiceResult<bool>.FailureResult("Entry not found");
 
             _context.JournalEntries.Remove(entry);
@@ -140,9 +154,10 @@ public class JournalService : IJournalService
                 return await GetAllEntriesAsync();
 
             var entries = await _context.JournalEntries
-                .Where(e => e.Title.Contains(searchTerm) ||
-                           e.Content.Contains(searchTerm) ||
-                           e.Tags.Contains(searchTerm))
+                .Where(e => e.UserId == CurrentUserId && 
+                           (e.Title.Contains(searchTerm) ||
+                            e.Content.Contains(searchTerm) ||
+                            e.Tags.Contains(searchTerm)))
                 .OrderByDescending(e => e.CreatedAt)
                 .Select(e => new JournalDisplayModel
                 {
@@ -151,6 +166,7 @@ public class JournalService : IJournalService
                     Content = e.Content,
                     CreatedAt = e.CreatedAt,
                     Mood = e.Mood,
+                    SecondaryMoods = e.SecondaryMoods,
                     Tags = e.Tags,
                     WordCount = e.WordCount,
                     CharacterCount = e.CharacterCount
@@ -169,7 +185,7 @@ public class JournalService : IJournalService
         try
         {
             var entries = await _context.JournalEntries
-                .Where(e => e.Mood == mood)
+                .Where(e => e.Mood == mood && e.UserId == CurrentUserId)
                 .OrderByDescending(e => e.CreatedAt)
                 .Select(e => new JournalDisplayModel
                 {
@@ -178,6 +194,7 @@ public class JournalService : IJournalService
                     Content = e.Content,
                     CreatedAt = e.CreatedAt,
                     Mood = e.Mood,
+                    SecondaryMoods = e.SecondaryMoods,
                     Tags = e.Tags,
                     WordCount = e.WordCount,
                     CharacterCount = e.CharacterCount
@@ -195,7 +212,8 @@ public class JournalService : IJournalService
     {
         try
         {
-            var count = await _context.JournalEntries.CountAsync();
+            var count = await _context.JournalEntries
+                .CountAsync(e => e.UserId == CurrentUserId);
             return ServiceResult<int>.SuccessResult(count);
         }
         catch (Exception ex)
@@ -209,6 +227,7 @@ public class JournalService : IJournalService
         try
         {
             var entries = await _context.JournalEntries
+                .Where(e => e.UserId == CurrentUserId)
                 .OrderByDescending(e => e.CreatedAt)
                 .ToListAsync();
 
@@ -246,7 +265,7 @@ public class JournalService : IJournalService
         {
             var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var count = await _context.JournalEntries
-                .CountAsync(e => e.CreatedAt >= startOfMonth);
+                .CountAsync(e => e.CreatedAt >= startOfMonth && e.UserId == CurrentUserId);
             return ServiceResult<int>.SuccessResult(count);
         }
         catch (Exception ex)
@@ -259,7 +278,9 @@ public class JournalService : IJournalService
     {
         try
         {
-            var query = _context.JournalEntries.AsQueryable();
+            var query = _context.JournalEntries
+                .Where(e => e.UserId == CurrentUserId)
+                .AsQueryable();
 
             if (startDate.HasValue)
                 query = query.Where(e => e.CreatedAt >= startDate.Value);
@@ -286,6 +307,7 @@ public class JournalService : IJournalService
 
             // Streak Logic
             var allEntries = await _context.JournalEntries
+                .Where(e => e.UserId == CurrentUserId)
                 .OrderByDescending(e => e.CreatedAt)
                 .Select(e => e.CreatedAt.Date)
                 .Distinct()
@@ -383,13 +405,57 @@ public class JournalService : IJournalService
         }
     }
 
+    public async Task<ServiceResult<byte[]>> ExportEntriesToPdfAsync(DateTime startDate, DateTime endDate)
+    {
+        try
+        {
+            var entries = await _context.JournalEntries
+                .Where(e => e.UserId == CurrentUserId && e.CreatedAt.Date >= startDate.Date && e.CreatedAt.Date <= endDate.Date)
+                .OrderBy(e => e.CreatedAt)
+                .ToListAsync();
+
+            if (entries.Count == 0)
+                return ServiceResult<byte[]>.FailureResult("No entries found in the selected date range.");
+
+            // Basic text export formatted as "PDF content"
+            // In a real scenario, we would use a library like QuestPDF or iText
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("JOURNAL EXPORT");
+            sb.AppendLine($"Range: {startDate:yyyy-MM-dd} to {endDate:yyyy-MM-dd}");
+            sb.AppendLine("==========================================");
+            sb.AppendLine();
+
+            foreach (var entry in entries)
+            {
+                sb.AppendLine($"TITLE: {entry.Title}");
+                sb.AppendLine($"DATE: {entry.CreatedAt:F}");
+                sb.AppendLine($"MOOD: {entry.Mood} (Secondary: {entry.SecondaryMoods})");
+                sb.AppendLine($"TAGS: {entry.Tags}");
+                sb.AppendLine("------------------------------------------");
+                // Remove HTML tags for the text export
+                var plainText = System.Text.RegularExpressions.Regex.Replace(entry.Content, "<.*?>", string.Empty);
+                sb.AppendLine(plainText);
+                sb.AppendLine();
+                sb.AppendLine("==========================================");
+                sb.AppendLine();
+            }
+
+            var bytes = System.Text.Encoding.UTF8.GetBytes(sb.ToString());
+            return ServiceResult<byte[]>.SuccessResult(bytes);
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<byte[]>.FailureResult(ex.Message);
+        }
+    }
+
     public async Task<ServiceResult<bool>> HasEntryTodayAsync()
     {
         try
         {
             var today = DateTime.Today;
             var exists = await _context.JournalEntries
-                .AnyAsync(e => e.CreatedAt.Date == today);
+                .AnyAsync(e => e.CreatedAt.Date == today && e.UserId == CurrentUserId);
             return ServiceResult<bool>.SuccessResult(exists);
         }
         catch (Exception ex)
@@ -407,6 +473,7 @@ public class JournalService : IJournalService
             Content = entry.Content,
             CreatedAt = entry.CreatedAt,
             Mood = entry.Mood,
+            SecondaryMoods = entry.SecondaryMoods,
             Tags = entry.Tags,
             WordCount = entry.WordCount,
             CharacterCount = entry.CharacterCount

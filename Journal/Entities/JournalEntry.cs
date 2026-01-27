@@ -8,7 +8,9 @@ public class JournalEntry
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public string Mood { get; set; } = "Neutral";
+    public string SecondaryMoods { get; set; } = string.Empty; // Comma-separated secondary moods
     public string Tags { get; set; } = string.Empty; // Comma-separated tags
     public int WordCount { get; set; }
     public int CharacterCount { get; set; }
+    public int UserId { get; set; }
 }

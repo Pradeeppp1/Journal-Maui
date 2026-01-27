@@ -31,12 +31,28 @@
             </div>
 
             <div class="meta-item">
-                <label>How are you feeling today?</label>
+                <label>Primary Mood (Required)</label>
                 <div class="mood-selector">
                     @foreach (var mood in moods)
                     {
                         <div class="mood-option @(entry.Mood == mood.Name ? "selected" : "")" 
                              @onclick="() => SelectMood(mood.Name)">
+                            <span class="mood-emoji">@mood.Emoji</span>
+                            <span class="mood-label">@mood.Name</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="meta-item">
+                <label>Secondary Moods (Optional - pick up to 2)</label>
+                <div class="mood-selector secondary">
+                    @foreach (var mood in moods)
+                    {
+                        var isSelected = secondaryMoods.Contains(mood.Name);
+                        var isPrimary = entry.Mood == mood.Name;
+                        <div class="mood-option @(isSelected ? "selected" : "") @(isPrimary ? "disabled" : "")" 
+                             @onclick="() => ToggleSecondaryMood(mood.Name)">
                             <span class="mood-emoji">@mood.Emoji</span>
                             <span class="mood-label">@mood.Name</span>
                         </div>
@@ -100,6 +116,7 @@
 @code {
     private JournalDisplayModel entry = new() { CreatedAt = DateTime.Now };
     private List<string> tags = new();
+    private List<string> secondaryMoods = new();
     private string newTag = string.Empty;
     private bool isSaved = true;
     private bool isEditing = false;
@@ -196,6 +213,10 @@
             {
                 tags = entry.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
             }
+            if (!string.IsNullOrEmpty(entry.SecondaryMoods))
+            {
+                secondaryMoods = entry.SecondaryMoods.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+            }
             UpdateWordCount();
         }
     }
@@ -216,11 +237,13 @@
         if (!isSaved && !string.IsNullOrWhiteSpace(entry.Title) && !string.IsNullOrWhiteSpace(entry.Content))
         {
             entry.Tags = string.Join(", ", tags);
+            entry.SecondaryMoods = string.Join(", ", secondaryMoods);
             var viewModel = new JournalViewModel
             {
                 Title = entry.Title,
                 Content = entry.Content,
                 Mood = entry.Mood,
+                SecondaryMoods = entry.SecondaryMoods,
                 Tags = entry.Tags
             };
 
@@ -260,11 +283,13 @@
         }
 
         entry.Tags = string.Join(", ", tags);
+        entry.SecondaryMoods = string.Join(", ", secondaryMoods);
         var viewModel = new JournalViewModel
         {
             Title = entry.Title,
             Content = entry.Content,
             Mood = entry.Mood,
+            SecondaryMoods = entry.SecondaryMoods,
             Tags = entry.Tags
         };
         
@@ -316,6 +341,29 @@
     private async Task SelectMood(string moodName)
     {
         entry.Mood = moodName;
+        // Primary mood cannot be a secondary mood
+        secondaryMoods.Remove(moodName);
+        OnContentChanged();
+    }
+
+    private void ToggleSecondaryMood(string moodName)
+    {
+        if (entry.Mood == moodName) return; // Cannot pick primary as secondary
+
+        if (secondaryMoods.Contains(moodName))
+        {
+            secondaryMoods.Remove(moodName);
+        }
+        else if (secondaryMoods.Count < 2)
+        {
+            secondaryMoods.Add(moodName);
+        }
+        else
+        {
+            // Replace the oldest one or just ignore? Requirement says "up to two"
+            // Let's just ignore if already at 2.
+            return;
+        }
         OnContentChanged();
     }
 

@@ -36,10 +36,18 @@
         <button class="theme-btn @(currentTheme == "sepia" ? "active" : "")" @onclick='() => SetTheme("sepia")' title="Sepia Mode">
             <i class="bi bi-book"></i>
         </button>
+        
+        <div class="divider"></div>
+        
+        <button class="logout-btn" @onclick="HandleLogout" title="Logout">
+            <i class="bi bi-box-arrow-right"></i>
+        </button>
     </div>
 </nav>
 
 @code {
+    [Inject] private IAuthService AuthService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
     private string currentTheme = "light";
 
     protected override async Task OnInitializedAsync()
@@ -51,5 +59,11 @@
     {
         currentTheme = theme;
         await ThemeService.SetThemeAsync(theme);
+    }
+
+    private async Task HandleLogout()
+    {
+        await AuthService.LogoutAsync();
+        Navigation.NavigateTo("/Login", true);
     }
 }

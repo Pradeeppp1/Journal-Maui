@@ -1,171 +1,144 @@
 @page "/Setting"
 @inject IProfileService ProfileService
+@inject IJournalService JournalService
 @inject ISecurityService SecurityService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 
-<div class="container @(profile.IsDarkMode ? "dark-theme" : "")">
+<div class="container">
     <div class="header">
-        <h1>Settings</h1>
-        <div style="width: 100px;"></div>
+        <h1>⚙️ Settings</h1>
     </div>
 
     @if (isLoading)
     {
-        <div class="loading-overlay">
+        <div class="loading-state">
             <div class="spinner"></div>
             <p>Loading settings...</p>
         </div>
     }
     else if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="error-container">
-            <h2>Error Loading Settings</h2>
+        <div class="error-state">
+            <h3>Error Loading Settings</h3>
             <p>@errorMessage</p>
             <button class="btn btn-primary" @onclick="LoadProfile">Retry</button>
         </div>
     }
     else
     {
-        <main class="settings-content">
-            <!-- Profile Section -->
-            <section class="settings-section">
-                <div class="section-header">
-                    <h2 class="section-title">Profile</h2>
-                    <p class="section-description">Update your personal information</p>
-                </div>
+        <div class="settings-layout">
+            <!-- Profile Column -->
+            <div class="settings-panel">
+                <section class="settings-card">
+                    <div class="card-header">
+                        <h2 class="card-title">User Profile</h2>
+                        <p class="card-desc">Manage how you appear in your journal</p>
+                    </div>
 
-                <div class="profile-picture-section">
-                    <div class="profile-avatar">
-                        @profile.Initials
-                    </div>
-                    <div class="profile-actions">
-                        <button class="btn btn-secondary">Change Photo</button>
-                        <button class="btn btn-danger">Remove</button>
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Full Name</div>
-                        <div class="setting-desc">Visible to other users when you share entries</div>
-                    </div>
-                    <div class="setting-control">
-                        <input type="text" class="input-field" @bind="profile.FullName" />
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Email Address</div>
-                        <div class="setting-desc">Used for notifications and backup</div>
-                    </div>
-                    <div class="setting-control">
-                        <input type="email" class="input-field" @bind="profile.Email" />
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Username</div>
-                        <div class="setting-desc">Your unique handle within the app</div>
-                    </div>
-                    <div class="setting-control">
-                        <input type="text" class="input-field" @bind="profile.Username" />
-                    </div>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Bio</div>
-                        <div class="setting-desc">A short description of yourself</div>
-                    </div>
-                    <div class="setting-control">
-                        <textarea class="input-field textarea-field" @bind="profile.Bio"></textarea>
-                    </div>
-                </div>
-
-                <div style="padding-top: 1.5rem; text-align: right;">
-                    <button class="btn btn-primary" @onclick="UpdateProfile">Save Changes</button>
-                </div>
-            </section>
-
-            <!-- Appearance Section -->
-            <section class="settings-section">
-                <div class="section-header">
-                    <h2 class="section-title">Appearance</h2>
-                    <p class="section-description">Customize your visual experience</p>
-                </div>
-            </section>
-
-            <!-- Security Section -->
-            <section class="settings-section">
-                <div class="section-header">
-                    <h2 class="section-title">Security</h2>
-                    <p class="section-description">Manage your privacy and access</p>
-                </div>
-
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">PIN Lock</div>
-                        <div class="setting-desc">Lock your journal with a 4-digit code</div>
-                    </div>
-                    <div class="setting-control">
-                        <div class="toggle-switch @(SecurityService.IsPinSet() ? "active" : "")" @onclick="TogglePinManagement"></div>
-                    </div>
-                </div>
-
-                @if (showPinManagement)
-                {
-                    <div class="pin-setup">
-                        <div class="setting-row">
-                            <div class="setting-info">
-                                <div class="setting-label">PIN Code</div>
-                                <div class="setting-desc">@(SecurityService.IsPinSet() ? "Change your existing PIN" : "Setup a new access code")</div>
-                            </div>
-                            <div class="setting-control">
-                                <input type="password" maxlength="4" class="input-field" style="width: 100px; text-align: center;" @bind="newPin" />
-                            </div>
-                        </div>
-                        <div class="pin-actions">
-                            <button class="btn btn-primary" @onclick="SavePin">Save PIN</button>
-                            @if (SecurityService.IsPinSet())
-                            {
-                                <button class="btn btn-danger" @onclick="RemovePin">Disable Lock</button>
-                            }
+                    <div class="profile-preview">
+                        <div class="profile-avatar">@profile.Initials</div>
+                        <div class="profile-info-mini">
+                            <span class="mini-name">@profile.FullName</span>
+                            <span class="mini-handle">@@@(string.IsNullOrEmpty(profile.Username) ? "username" : profile.Username)</span>
                         </div>
                     </div>
-                }
-            </section>
 
-            <!-- Maintenance Section -->
-            <section class="settings-section danger-zone">
-                <div class="section-header">
-                    <h2 class="section-title">Maintenance</h2>
-                    <p class="section-description">Critical system operations</p>
-                </div>
-                
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Database Management</div>
-                        <div class="setting-desc">Rebuild system tables in case of errors</div>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" @bind="profile.FullName" placeholder="Your Name" />
                     </div>
-                    <div class="setting-control">
-                        <button class="btn btn-danger" @onclick="ResetDatabase">Rebuild DB</button>
+
+                    <div class="form-group">
+                        <label>Username</label>
+                        <div class="input-with-icon">
+                            <span class="input-icon">@@</span>
+                            <input type="text" class="form-control" @bind="profile.Username" placeholder="handle" />
+                        </div>
                     </div>
-                </div>
-                
-                <div class="setting-item">
-                    <div class="setting-info">
-                        <div class="setting-label">Permanently Delete Data</div>
-                        <div class="setting-desc">Clear all entries from this device</div>
+
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" class="form-control" @bind="profile.Email" placeholder="your@email.com" />
                     </div>
-                    <div class="setting-control">
-                        <button class="btn btn-danger" @onclick="ClearAllData">Delete All</button>
+
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea class="form-control" @bind="profile.Bio" placeholder="Tell your journal about yourself..." rows="3"></textarea>
                     </div>
-                </div>
-            </section>
-        </main>
+
+                    <div class="card-actions">
+                        <button class="btn btn-primary w-100" @onclick="UpdateProfile">Save Profile Changes</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Configuration Column -->
+            <div class="settings-panel">
+                <!-- Security Card -->
+                <section class="settings-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Security & Privacy</h2>
+                        <p class="card-desc">Keep your memories safe from prying eyes</p>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-text">
+                            <span class="setting-label">PIN Lock Protection</span>
+                            <span class="setting-desc">Require a code every time you open the app</span>
+                        </div>
+                        <div class="setting-control">
+                             <div class="toggle-container @(SecurityService.IsPinSet() ? "on" : "off")" @onclick="TogglePinManagement">
+                                 <div class="toggle-handle"></div>
+                             </div>
+                        </div>
+                    </div>
+
+                    @if (showPinManagement)
+                    {
+                        <div class="pin-config-box fade-in">
+                            <div class="form-group">
+                                <label>@(SecurityService.IsPinSet() ? "New 4-Digit PIN" : "Create 4-Digit PIN")</label>
+                                <input type="password" maxlength="4" class="form-control pin-input" @bind="newPin" placeholder="••••" />
+                            </div>
+                            <div class="pin-actions">
+                                <button class="btn btn-primary btn-sm" @onclick="SavePin">Set PIN</button>
+                                @if (SecurityService.IsPinSet())
+                                {
+                                    <button class="btn btn-outline-danger btn-sm" @onclick="RemovePin">Disable PIN</button>
+                                }
+                            </div>
+                        </div>
+                    }
+                </section>
+
+                <!-- System & Data -->
+                <section class="settings-card danger">
+                    <div class="card-header">
+                        <h2 class="card-title">Maintenance</h2>
+                        <p class="card-desc">Advanced data management options</p>
+                    </div>
+
+                    <div class="maintenance-actions">
+                        <div class="m-action">
+                            <div class="m-text">
+                                <span class="m-label">Clear All Journal Entries</span>
+                                <span class="m-desc">Deletes all entries but keeps your profile</span>
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm" @onclick="ClearAllData">Wipe Entries</button>
+                        </div>
+
+                        <div class="m-action">
+                            <div class="m-text">
+                                <span class="m-label">Total System Reset</span>
+                                <span class="m-desc">Reset database and clear all local data</span>
+                            </div>
+                            <button class="btn btn-danger btn-sm" @onclick="ResetDatabase">Hard Reset</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
     }
 </div>
 
@@ -223,24 +196,12 @@
         var result = await ProfileService.UpdateProfileAsync(model);
         if (result.Success)
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Profile updated.");
+            await JSRuntime.InvokeVoidAsync("alert", "Settings updated successfully! ✨");
         }
         else
         {
             await JSRuntime.InvokeVoidAsync("alert", "Update failed: " + result.Message);
         }
-    }
-
-    private async Task ToggleDarkMode()
-    {
-        profile.IsDarkMode = !profile.IsDarkMode;
-        await UpdateProfile();
-    }
-
-    private async Task ToggleCompactView()
-    {
-        profile.IsCompactView = !profile.IsCompactView;
-        await UpdateProfile();
     }
 
     private void TogglePinManagement()
@@ -254,44 +215,71 @@
         {
             SecurityService.SetPin(newPin);
             SecurityService.IsAuthenticated = true;
-            await JSRuntime.InvokeVoidAsync("alert", "PIN protected.");
+            await JSRuntime.InvokeVoidAsync("alert", "PIN protection enabled. 🔒");
             newPin = "";
         }
         else
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Enter 4 digits.");
+            await JSRuntime.InvokeVoidAsync("alert", "Please enter exactly 4 digits.");
         }
     }
 
     private async Task RemovePin()
     {
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Disable PIN lock?");
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Disable PIN security? Your journal will be accessible to anyone with this device.");
         if (confirmed)
         {
             SecurityService.ClearPin();
             showPinManagement = false;
-            await JSRuntime.InvokeVoidAsync("alert", "PIN disabled.");
+            await JSRuntime.InvokeVoidAsync("alert", "PIN lock disabled.");
         }
     }
 
     private async Task ClearAllData()
     {
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Delete all data? This cannot be undone.");
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Delete all entries? This action is irreversible.");
         if (confirmed)
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Maintenance feature coming soon.");
+            isLoading = true;
+            try
+            {
+                var entries = await JournalService.GetAllEntriesAsync(1, 10000);
+                if (entries.Success && entries.Data != null)
+                {
+                    foreach (var entry in entries.Data)
+                    {
+                        await JournalService.DeleteEntryAsync(entry.Id);
+                    }
+                }
+                await JSRuntime.InvokeVoidAsync("alert", "Your journal has been cleared.");
+                Navigation.NavigateTo("/", true);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
     }
 
     private async Task ResetDatabase()
     {
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "This will wipe the database and recreate it. Continue?");
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "CRITICAL: This will destroy the database file and clear everything. Continue?");
         if (confirmed)
         {
             isLoading = true;
             try 
             {
-                await JSRuntime.InvokeVoidAsync("alert", "Please restart the application to complete re-initialization.");
+                var dbPath = Path.Combine(FileSystem.AppDataDirectory, "journal.db");
+                if (File.Exists(dbPath))
+                {
+                    File.Delete(dbPath);
+                }
+                await JSRuntime.InvokeVoidAsync("alert", "System has been reset. The app will now reload.");
+                Navigation.NavigateTo("/", true);
+            }
+            catch (Exception ex)
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Error resetting system: " + ex.Message);
             }
             finally
             {

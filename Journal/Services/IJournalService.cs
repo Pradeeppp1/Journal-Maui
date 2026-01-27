@@ -5,7 +5,7 @@ namespace Journal.Services;
 
 public interface IJournalService
 {
-    Task<ServiceResult<List<JournalDisplayModel>>> GetAllEntriesAsync();
+    Task<ServiceResult<List<JournalDisplayModel>>> GetAllEntriesAsync(int page = 1, int pageSize = 10);
     Task<ServiceResult<JournalDisplayModel>> GetEntryByIdAsync(int id);
     Task<ServiceResult<JournalDisplayModel>> CreateEntryAsync(JournalViewModel model);
     Task<ServiceResult<JournalDisplayModel>> UpdateEntryAsync(int id, JournalViewModel model);
@@ -17,4 +17,5 @@ public interface IJournalService
     Task<ServiceResult<int>> GetThisMonthEntriesCountAsync();
     Task<ServiceResult<bool>> HasEntryTodayAsync();
     Task<ServiceResult<AnalyticsDto>> GetAnalyticsAsync(DateTime? startDate, DateTime? endDate);
+    Task<ServiceResult<byte[]>> ExportEntriesToPdfAsync(DateTime startDate, DateTime endDate);
 }

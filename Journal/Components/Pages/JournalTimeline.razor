@@ -1,5 +1,7 @@
 @page "/JournalTimeline"
 @layout MainLayout
+@using Journal.Services
+@using Journal.Models
 @inject IJournalService JournalService
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
@@ -10,19 +12,22 @@
         <h1>📚 My Journal Timeline</h1>
         <div class="header-actions">
             <div class="view-toggle">
-                <button class="view-btn @(viewMode == "Timeline" ? "active" : "")" @onclick='() => SetViewMode("JournalTimeline")'>Timeline</button>
-                <button class="view-btn @(viewMode == "Calendar" ? "active" : "")" @onclick="NavigateToCalendar">Calendar</button>
+                <button class="view-btn active">Timeline</button>
+                <button class="view-btn" @onclick='() => Navigation.NavigateTo("/Calendar")'>Calendar</button>
             </div>
-            <button class="btn btn-primary" @onclick="NavigateToNewEntry">+ New Entry</button>
+            <button class="btn btn-secondary" @onclick="ShowExportDialog">
+                <i class="bi bi-download"></i> Export
+            </button>
+            <button class="btn btn-primary" @onclick='() => Navigation.NavigateTo("/JournalEntry")'>+ New Entry</button>
         </div>
     </div>
 
     <!-- Filters Bar -->
     <div class="filters-bar">
         <div class="search-box">
-            <span class="search-icon"><i class="bi bi-search"></i></span>
+            <i class="bi bi-search search-icon"></i>
             <input type="text" class="search-input" placeholder="Search entries..." 
-                   @bind="searchTerm" @bind:after="ApplyFilters" />
+                   @bind="searchTerm" @bind:event="oninput" @onkeyup="HandleKeyUp" />
         </div>
         
         <select class="filter-dropdown" @bind="selectedMood" @bind:after="ApplyFilters">
@@ -43,50 +48,34 @@
         </select>
 
         <select class="filter-dropdown" @bind="dateFilter" @bind:after="ApplyFilters">
-            <option value="ThisYear">This Year</option>
-            <option value="ThisMonth">This Month</option>
-            <option value="Last7Days">Last 7 Days</option>
             <option value="AllTime">All Time</option>
+            <option value="Today">Today</option>
+            <option value="Last7Days">Last 7 Days</option>
+            <option value="ThisMonth">This Month</option>
+            <option value="ThisYear">This Year</option>
         </select>
     </div>
 
     <!-- Timeline Container -->
     <div class="timeline-container">
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-value">@totalEntries</div>
-                <div class="stat-label">Total Entries</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">@currentStreak</div>
-                <div class="stat-label">Current Streak</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">@thisMonthEntries</div>
-                <div class="stat-label">This Month</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value">@avgWords</div>
-                <div class="stat-label">Avg Words</div>
-            </div>
-        </div>
-
-        @if (isLoading)
+        @if (isLoading && pageNum == 1)
         {
-            <div style="text-align: center; padding: 2rem;">
-                <p>Loading entries...</p>
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading your memories...</p>
             </div>
         }
-        else if (!displayedEntries.Any())
+        else if (!displayedEntries.Any() && !isLoading)
         {
-            <div style="text-align: center; padding: 2rem;">
-                <p>No entries found. <button class="btn btn-primary" @onclick="NavigateToNewEntry">Create your first entry!</button></p>
+            <div class="empty-state">
+                <div class="empty-icon">📔</div>
+                <h3>No entries found</h3>
+                <p>Try adjusting your filters or start writing a new memory.</p>
+                <button class="btn btn-primary" @onclick='() => Navigation.NavigateTo("/JournalEntry")'>Create First Entry</button>
             </div>
         }
         else
         {
-            <!-- Timeline -->
             <div class="timeline">
                 @foreach (var monthGroup in groupedEntries)
                 {
@@ -94,7 +83,6 @@
                         <div class="timeline-month">
                             <div class="month-marker"></div>
                             <span class="month-label">@monthGroup.Key</span>
-                            <span class="month-count">@monthGroup.Value.Count entry@(monthGroup.Value.Count != 1 ? "ies" : "")</span>
                         </div>
 
                         @foreach (var entry in monthGroup.Value)
@@ -106,32 +94,32 @@
                                             <span class="entry-date">@entry.CreatedAt.ToString("dddd, MMM dd")</span>
                                             <span class="entry-time">@entry.CreatedAt.ToString("h:mm tt")</span>
                                         </div>
-                                        <span class="entry-mood mood-@entry.Mood.ToLower()">@GetMoodEmoji(entry.Mood) @entry.Mood</span>
+                                        <div class="mood-badges">
+                                            <span class="entry-mood mood-@entry.Mood.ToLower()">@GetMoodEmoji(entry.Mood) @entry.Mood</span>
+                                            @if (!string.IsNullOrEmpty(entry.SecondaryMoods))
+                                            {
+                                                @foreach (var sm in entry.SecondaryMoods.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                                {
+                                                    <span class="entry-mood secondary mood-@sm.Trim().ToLower()">@GetMoodEmoji(sm.Trim())</span>
+                                                }
+                                            }
+                                        </div>
                                     </div>
                                     <h3 class="entry-title">@entry.Title</h3>
-                                    <p class="entry-preview">
-                                        @GetPreview(entry.Content)
-                                    </p>
+                                    <p class="entry-preview">@GetPreview(entry.Content)</p>
                                     <div class="entry-footer">
                                         @if (!string.IsNullOrEmpty(entry.Tags))
                                         {
                                             <div class="entry-tags">
-                                                @foreach (var tag in entry.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                                                @foreach (var tag in entry.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
                                                 {
-                                                    <span class="tag">#@tag</span>
+                                                    <span class="tag">#@tag.Trim()</span>
                                                 }
                                             </div>
                                         }
                                         <div class="entry-actions">
-                                            <button class="action-btn" title="Edit" @onclick="() => EditEntry(entry.Id)">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
-                                            <button class="action-btn" title="Share" @onclick="() => ShareEntry(entry)">
-                                                <i class="bi bi-share"></i>
-                                            </button>
-                                            <button class="action-btn" title="Delete" @onclick="() => DeleteEntry(entry.Id)">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
+                                            <button class="action-btn" @onclick="() => EditEntry(entry.Id)"><i class="bi bi-pencil"></i></button>
+                                            <button class="action-btn" @onclick="() => DeleteEntry(entry.Id)"><i class="bi bi-trash"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -140,204 +128,210 @@
                     </div>
                 }
             </div>
+
+            @if (hasMoreEntries)
+            {
+                <div class="load-more-container">
+                    <button class="btn btn-secondary" @onclick="LoadMore" disabled="@isLoading">
+                        @(isLoading ? "Loading..." : "Load More Entries")
+                    </button>
+                </div>
+            }
         }
     </div>
 </div>
 
+@if (showExportModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <h3>Export Journal</h3>
+            <p>Select date range to export your entries as PDF (Text format).</p>
+            <div class="form-group">
+                <label>Start Date</label>
+                <input type="date" class="form-control" @bind="exportStartDate" />
+            </div>
+            <div class="form-group">
+                <label>End Date</label>
+                <input type="date" class="form-control" @bind="exportEndDate" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" @onclick="() => showExportModal = false">Cancel</button>
+                <button class="btn btn-primary" @onclick="DoExport">Export Now</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
-    private List<JournalDisplayModel> allEntries = new();
+    private List<JournalDisplayModel> allLoadedEntries = new();
     private List<JournalDisplayModel> displayedEntries = new();
     private Dictionary<string, List<JournalDisplayModel>> groupedEntries = new();
     private bool isLoading = true;
+    private int pageNum = 1;
+    private const int pageSize = 5; // Smaller for testing pagination
+    private bool hasMoreEntries = true;
+
+    // Filters
     private string searchTerm = string.Empty;
     private string selectedMood = string.Empty;
     private string selectedTag = string.Empty;
     private string dateFilter = "AllTime";
-    private string viewMode = "Timeline";
-    private int totalEntries = 0;
-    private int currentStreak = 0;
-    private int thisMonthEntries = 0;
-    private string avgWords = "0";
     private HashSet<string> availableTags = new();
+
+    // Export
+    private bool showExportModal = false;
+    private DateTime exportStartDate = DateTime.Today.AddMonths(-1);
+    private DateTime exportEndDate = DateTime.Today;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        await LoadEntries();
     }
 
-    private async Task LoadData()
+    private async Task LoadEntries(bool append = false)
     {
         isLoading = true;
-        try
+        if (!append) 
         {
-            var allResult = await JournalService.GetAllEntriesAsync();
-            if (allResult.Success)
+            pageNum = 1;
+            allLoadedEntries.Clear();
+        }
+
+        var result = await JournalService.GetAllEntriesAsync(pageNum, pageSize);
+        if (result.Success && result.Data != null)
+        {
+            if (append)
             {
-                allEntries = allResult.Data ?? new();
-                displayedEntries = allEntries;
+                allLoadedEntries.AddRange(result.Data);
+            }
+            else
+            {
+                allLoadedEntries = result.Data;
             }
             
-            var totalResult = await JournalService.GetTotalEntriesCountAsync();
-            if (totalResult.Success) totalEntries = totalResult.Data;
+            hasMoreEntries = result.Data.Count == pageSize;
+            ApplyFilters();
+            ExtractTags();
+        }
+        
+        isLoading = false;
+        StateHasChanged();
+    }
 
-            var streakResult = await JournalService.GetCurrentStreakAsync();
-            if (streakResult.Success) currentStreak = streakResult.Data;
+    private async Task LoadMore()
+    {
+        pageNum++;
+        await LoadEntries(true);
+    }
 
-            var monthResult = await JournalService.GetThisMonthEntriesCountAsync();
-            if (monthResult.Success) thisMonthEntries = monthResult.Data;
-            
-            var totalWords = allEntries.Sum(e => e.WordCount);
-            avgWords = allEntries.Count > 0 ? (totalWords / allEntries.Count).ToString() : "0";
-            
-            // Extract unique tags
-            availableTags = new HashSet<string>();
-            foreach (var entry in allEntries)
+    private void ExtractTags()
+    {
+        foreach (var entry in allLoadedEntries)
+        {
+            if (!string.IsNullOrEmpty(entry.Tags))
             {
-                if (!string.IsNullOrEmpty(entry.Tags))
+                foreach (var tag in entry.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
                 {
-                    var entryTags = entry.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    foreach (var tag in entryTags)
-                    {
-                        availableTags.Add(tag);
-                    }
+                    availableTags.Add(tag.Trim());
                 }
             }
-            
-            GroupEntries();
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
         }
     }
 
-    private Task ApplyFilters()
+    private void ApplyFilters()
     {
-        displayedEntries = allEntries;
+        var query = allLoadedEntries.AsEnumerable();
 
-        // Apply date filter
-        var now = DateTime.Now;
-        displayedEntries = dateFilter switch
-        {
-            "ThisYear" => displayedEntries.Where(e => e.CreatedAt.Year == now.Year).ToList(),
-            "ThisMonth" => displayedEntries.Where(e => e.CreatedAt.Year == now.Year && e.CreatedAt.Month == now.Month).ToList(),
-            "Last7Days" => displayedEntries.Where(e => e.CreatedAt >= now.AddDays(-7)).ToList(),
-            _ => displayedEntries
-        };
-
-        // Apply mood filter
-        if (!string.IsNullOrEmpty(selectedMood))
-        {
-            displayedEntries = displayedEntries.Where(e => e.Mood == selectedMood).ToList();
-        }
-
-        // Apply tag filter
-        if (!string.IsNullOrEmpty(selectedTag))
-        {
-            displayedEntries = displayedEntries.Where(e => 
-                !string.IsNullOrEmpty(e.Tags) && 
-                e.Tags.Contains(selectedTag, StringComparison.OrdinalIgnoreCase)).ToList();
-        }
-
-        // Apply search filter
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            displayedEntries = displayedEntries.Where(e => 
-                e.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                e.Content.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                (!string.IsNullOrEmpty(e.Tags) && e.Tags.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
+            query = query.Where(e => e.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || 
+                                    e.Content.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
         }
 
+        if (!string.IsNullOrEmpty(selectedMood))
+        {
+            query = query.Where(e => e.Mood == selectedMood || 
+                                    (e.SecondaryMoods != null && e.SecondaryMoods.Contains(selectedMood)));
+        }
+
+        if (!string.IsNullOrEmpty(selectedTag))
+        {
+            query = query.Where(e => e.Tags != null && e.Tags.Contains(selectedTag));
+        }
+
+        var now = DateTime.Today;
+        query = dateFilter switch
+        {
+            "Today" => query.Where(e => e.CreatedAt.Date == now),
+            "Last7Days" => query.Where(e => e.CreatedAt.Date >= now.AddDays(-7)),
+            "ThisMonth" => query.Where(e => e.CreatedAt.Year == now.Year && e.CreatedAt.Month == now.Month),
+            "ThisYear" => query.Where(e => e.CreatedAt.Year == now.Year),
+            _ => query
+        };
+
+        displayedEntries = query.ToList();
         GroupEntries();
-        StateHasChanged();
-        return Task.CompletedTask;
     }
 
     private void GroupEntries()
     {
         groupedEntries = displayedEntries
+            .OrderByDescending(e => e.CreatedAt)
             .GroupBy(e => e.CreatedAt.ToString("MMMM yyyy"))
-            .OrderByDescending(g => g.First().CreatedAt)
-            .ToDictionary(g => g.Key, g => g.OrderByDescending(e => e.CreatedAt).ToList());
+            .ToDictionary(g => g.Key, g => g.ToList());
     }
 
-    private void SetViewMode(string mode)
+    private Task HandleKeyUp(KeyboardEventArgs e)
     {
-        viewMode = mode;
-        if (mode == "Calendar")
-        {
-            NavigateToCalendar();
-        }
-        StateHasChanged();
+        ApplyFilters();
+        return Task.CompletedTask;
     }
 
-    private void NavigateToNewEntry()
-    {
-        Navigation.NavigateTo("/JournalEntry");
-    }
-
-    private void NavigateToCalendar()
-    {
-        Navigation.NavigateTo("/Calendar");
-    }
-
-    private void EditEntry(int id)
-    {
-        Navigation.NavigateTo($"/JournalEntry?id={id}");
-    }
-
-    private async Task ShareEntry(JournalDisplayModel entry)
-    {
-        var shareText = $"{entry.Title}\n\n{entry.Content}\n\nTags: {entry.Tags}";
-        try
-        {
-            await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", shareText);
-            await JSRuntime.InvokeVoidAsync("alert", "Entry copied to clipboard!");
-        }
-        catch
-        {
-            await JSRuntime.InvokeVoidAsync("alert", "Failed to share entry.");
-        }
-    }
+    private void EditEntry(int id) => Navigation.NavigateTo($"/JournalEntry?id={id}");
 
     private async Task DeleteEntry(int id)
     {
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this entry?");
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Delete this memory forever?");
         if (confirmed)
         {
-            var result = await JournalService.DeleteEntryAsync(id);
-            if (result.Success && result.Data)
-            {
-                await LoadData();
-                await JSRuntime.InvokeVoidAsync("alert", "Entry deleted successfully!");
-            }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync("alert", "Failed to delete entry.");
-            }
+            await JournalService.DeleteEntryAsync(id);
+            await LoadEntries();
         }
     }
 
-    private string GetPreview(string content)
+    private void ShowExportDialog() => showExportModal = true;
+
+    private async Task DoExport()
     {
-        if (string.IsNullOrWhiteSpace(content))
-            return string.Empty;
-        
-        var preview = content.Length > 150 ? content.Substring(0, 150) + "..." : content;
-        return preview;
+        var result = await JournalService.ExportEntriesToPdfAsync(exportStartDate, exportEndDate);
+        if (result.Success && result.Data != null)
+        {
+            var fileName = $"Journal_Export_{DateTime.Now:yyyyMMdd}.txt";
+            await JSRuntime.InvokeVoidAsync("downloadFile", fileName, Convert.ToBase64String(result.Data));
+            showExportModal = false;
+            await JSRuntime.InvokeVoidAsync("alert", "Exported successfully! Check your downloads.");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Export failed: {result.Message}");
+        }
     }
 
-    private string GetMoodEmoji(string mood)
+    private string GetPreview(string html)
     {
-        return mood switch
-        {
-            "Happy" => "😊",
-            "Calm" => "😌",
-            "Neutral" => "😐",
-            "Reflective" => "😔",
-            "Sad" => "😢",
-            _ => "📝"
-        };
+        if (string.IsNullOrEmpty(html)) return "No content";
+        var plainText = System.Text.RegularExpressions.Regex.Replace(html, "<.*?>", string.Empty);
+        return plainText.Length > 150 ? plainText.Substring(0, 150) + "..." : plainText;
     }
+
+    private string GetMoodEmoji(string mood) => mood.ToLower() switch
+    {
+        "happy" => "😊",
+        "calm" => "😌",
+        "neutral" => "😐",
+        "reflective" => "😔",
+        "sad" => "😢",
+        _ => "📝"
+    };
 }

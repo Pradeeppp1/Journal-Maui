@@ -1,0 +1,129 @@
+.pin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e0e7ff 100%);
+    padding: 1rem;
+}
+
+.pin-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 2rem;
+    box-shadow: 
+        0 20px 25px -5px rgba(0, 0, 0, 0.1),
+        0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.icon-lock {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+p {
+    color: #64748b;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.pin-display {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.pin-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    transition: all 0.2s ease;
+}
+
+.pin-dot.filled {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    transform: scale(1.2);
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.key-btn {
+    width: 100%;
+    aspect-ratio: 1;
+    border: none;
+    background: #f8fafc;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.key-btn:hover {
+    background: #e2e8f0;
+}
+
+.key-btn:active {
+    background: #cbd5e1;
+    transform: scale(0.95);
+}
+
+.key-btn.action {
+    color: #64748b;
+    font-size: 1.25rem;
+    background: transparent;
+}
+
+.key-btn.action:hover {
+    color: #334155;
+    background: #f1f5f9;
+}
+
+.error-msg {
+    color: #ef4444;
+    background: #fef2f2;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.btn-link:hover {
+    opacity: 1;
+}

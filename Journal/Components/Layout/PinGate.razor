@@ -1,4 +1,5 @@
-@inject ISecurityService SecurityService
+@using Journal.Services
+@inject IAuthService AuthService
 @inject NavigationManager Navigation
 
 @if (isChecking)
@@ -12,9 +13,9 @@ else if (showPinEntry)
     <div class="pin-overlay">
         <div class="pin-container">
             <div class="pin-header">
-                <div class="pin-icon">🔒</div>
-                <h2>Secure Journal</h2>
-                <p>Please enter your 4-digit PIN</p>
+                <div class="pin-icon">@((mode == PinMode.Create) ? "🆕" : "🔒")</div>
+                <h2>@((mode == PinMode.Create) ? "Create PIN" : "Session Locked")</h2>
+                <p>@((mode == PinMode.Create) ? "Set a 4-digit PIN for session security" : "Enter your PIN to resume")</p>
             </div>
 
             <div class="pin-display">
@@ -39,6 +40,10 @@ else if (showPinEntry)
                 <button class="key-btn" @onclick='() => AppendDigit("0")'>0</button>
                 <button class="key-btn special" @onclick="Backspace">⌫</button>
             </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                 <button class="btn-link" @onclick="Logout">Logout</button>
+            </div>
         </div>
     </div>
 }
@@ -54,35 +59,58 @@ else
     private string errorMessage = "";
     private bool showPinEntry = false;
     private bool isChecking = true;
+    private PinMode mode = PinMode.Verify;
 
-    protected override void OnInitialized()
+    private enum PinMode { Create, Verify }
+
+    protected override async Task OnInitializedAsync()
     {
-        CheckStatus();
+        await CheckStatus();
     }
 
-    private void CheckStatus()
+    private async Task CheckStatus()
     {
-        if (SecurityService.IsPinSet() && !SecurityService.IsAuthenticated)
+        isChecking = true;
+        
+        // If not authenticated, let AuthGate handle it (we shouldn't be here or just pass through)
+        if (!AuthService.IsAuthenticated)
         {
+            showPinEntry = false;
+            isChecking = false;
+            return;
+        }
+
+        var hasPin = await AuthService.HasPinAsync();
+        
+        if (!hasPin)
+        {
+            mode = PinMode.Create;
+            showPinEntry = true;
+        }
+        else if (AuthService.IsSessionLocked)
+        {
+            mode = PinMode.Verify;
             showPinEntry = true;
         }
         else
         {
             showPinEntry = false;
         }
+
         isChecking = false;
     }
 
-    private void AppendDigit(string digit)
+    private async Task AppendDigit(string digit)
     {
-        if (pin.Length < 4)
+         if (pin.Length < 4)
         {
             pin += digit;
             errorMessage = "";
+            StateHasChanged();
 
             if (pin.Length == 4)
             {
-                Verify();
+                await SubmitPin();
             }
         }
     }
@@ -98,20 +126,45 @@ else
     private void ClearPin()
     {
         pin = "";
+        errorMessage = "";
     }
 
-    private void Verify()
+    private async Task SubmitPin()
     {
-        if (SecurityService.VerifyPin(pin))
+        await Task.Delay(100); // Visual delay
+
+        if (mode == PinMode.Create)
         {
-            SecurityService.IsAuthenticated = true;
-            showPinEntry = false;
-            StateHasChanged();
+            var success = await AuthService.SetPinAsync(pin);
+            if (success)
+            {
+                showPinEntry = false;
+            }
+            else
+            {
+                errorMessage = "Failed to set PIN.";
+                pin = "";
+            }
         }
         else
         {
-            pin = "";
-            errorMessage = "Incorrect PIN. Please try again.";
+            var isValid = await AuthService.VerifyPinAsync(pin);
+            if (isValid)
+            {
+                showPinEntry = false;
+            }
+            else
+            {
+                pin = "";
+                errorMessage = "Incorrect PIN. Please try again.";
+            }
         }
+        StateHasChanged();
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.LogoutAsync();
+        Navigation.NavigateTo("/Login", true);
     }
 }

@@ -24,6 +24,7 @@ public static class MauiProgram
             options.UseSqlite($"Data Source={dbPath}"));
 
         // Register services
+        builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IJournalService, JournalService>();
         builder.Services.AddScoped<IProfileService, ProfileService>();
         builder.Services.AddScoped<IThemeService, ThemeService>();
@@ -66,6 +67,24 @@ public static class MauiProgram
                 );";
             
             dbContext.Database.ExecuteSqlRaw(sql);
+
+            // Dynamic Migration - Add missing columns if they don't exist
+            try {
+                dbContext.Database.ExecuteSqlRaw("ALTER TABLE UserProfiles ADD COLUMN Password TEXT DEFAULT '';");
+            } catch { }
+
+            try {
+                dbContext.Database.ExecuteSqlRaw("ALTER TABLE JournalEntries ADD COLUMN SecondaryMoods TEXT DEFAULT '';");
+            } catch { }
+
+            try {
+                dbContext.Database.ExecuteSqlRaw("ALTER TABLE JournalEntries ADD COLUMN UserId INTEGER DEFAULT 0;");
+            } catch { }
+
+            try {
+                dbContext.Database.ExecuteSqlRaw("ALTER TABLE UserProfiles ADD COLUMN Pin TEXT DEFAULT '';");
+            } catch { }
+
         }
         catch (Exception ex)
         {

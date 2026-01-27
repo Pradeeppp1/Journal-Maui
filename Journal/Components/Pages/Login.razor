@@ -1,0 +1,93 @@
+@page "/Login"
+@layout EmptyLayout
+@using Journal.Services
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<div class="login-container">
+    <div class="login-card fade-in">
+        <div class="login-header">
+            <div class="logo">📔</div>
+            <h1>Welcome Back</h1>
+            <p>Login to your personal journal</p>
+        </div>
+
+        <div class="login-form">
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-msg">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <label>Username</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-person"></i>
+                    <input type="text" class="form-control" @bind="username" placeholder="Enter your username" @onkeyup="HandleKeyUp" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-lock"></i>
+                    <input type="password" class="form-control" @bind="password" placeholder="Enter your password" @onkeyup="HandleKeyUp" />
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-4" @onclick="HandleLogin" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm"></span>
+                }
+                else
+                {
+                    <span>Login</span>
+                }
+            </button>
+
+            <div class="login-footer">
+                Don't have an account? <a href="/Register">Create one</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string errorMessage = "";
+    private bool isLoading = false;
+
+    private async Task HandleLogin()
+    {
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Please fill in all fields";
+            return;
+        }
+
+        isLoading = true;
+        errorMessage = "";
+
+        var result = await AuthService.LoginAsync(username, password);
+        if (result.Success)
+        {
+            Navigation.NavigateTo("/", true);
+        }
+        else
+        {
+            errorMessage = result.Message;
+        }
+
+        isLoading = false;
+    }
+
+    private void HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            _ = HandleLogin();
+        }
+    }
+}

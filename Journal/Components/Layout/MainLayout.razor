@@ -1,19 +1,21 @@
 ﻿@inherits LayoutComponentBase
 @inject IThemeService ThemeService
 
-<PinGate>
-    <div class="page">
-        <div class="top-navbar">
-            <NavMenu />
-        </div>
+<AuthGate>
+    <PinGate>
+        <div class="page">
+            <div class="top-navbar">
+                <NavMenu />
+            </div>
 
-        <main>
-            <article class="content px-4">
-                @Body
-            </article>
-        </main>
-    </div>
-</PinGate>
+            <main>
+                <article class="content px-4">
+                    @Body
+                </article>
+            </main>
+        </div>
+    </PinGate>
+</AuthGate>
 
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)

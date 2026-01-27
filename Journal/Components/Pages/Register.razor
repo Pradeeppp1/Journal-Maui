@@ -1,0 +1,116 @@
+@page "/Register"
+@layout EmptyLayout
+@using Journal.Services
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<div class="login-container">
+    <div class="login-card fade-in">
+        <div class="login-header">
+            <div class="logo">✒️</div>
+            <h1>Create Account</h1>
+            <p>Start your private journaling journey</p>
+        </div>
+
+        <div class="login-form">
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-msg">@errorMessage</div>
+            }
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-person-badge"></i>
+                    <input type="text" class="form-control" @bind="model.FullName" placeholder="Your real name" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Username</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-at"></i>
+                    <input type="text" class="form-control" @bind="model.Username" placeholder="unique_handle" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-envelope"></i>
+                    <input type="email" class="form-control" @bind="model.Email" placeholder="you@example.com" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-lock"></i>
+                    <input type="password" class="form-control" @bind="model.Password" placeholder="Strong password" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <div class="input-wrapper">
+                    <i class="bi bi-shield-lock"></i>
+                    <input type="password" class="form-control" @bind="model.ConfirmPassword" placeholder="Repeat password" />
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-4" @onclick="HandleRegister" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm"></span>
+                }
+                else
+                {
+                    <span>Create My Journal</span>
+                }
+            </button>
+
+            <div class="login-footer">
+                Already have an account? <a href="/Login">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterViewModel model = new();
+    private string errorMessage = "";
+    private bool isLoading = false;
+
+    private async Task HandleRegister()
+    {
+        if (string.IsNullOrWhiteSpace(model.FullName) || 
+            string.IsNullOrWhiteSpace(model.Username) || 
+            string.IsNullOrWhiteSpace(model.Password))
+        {
+            errorMessage = "Please fill in all required fields";
+            return;
+        }
+
+        if (model.Password != model.ConfirmPassword)
+        {
+            errorMessage = "Passwords do not match";
+            return;
+        }
+
+        isLoading = true;
+        errorMessage = "";
+
+        var result = await AuthService.RegisterAsync(model);
+        if (result.Success)
+        {
+            Navigation.NavigateTo("/", true);
+        }
+        else
+        {
+            errorMessage = result.Message;
+        }
+
+        isLoading = false;
+    }
+}

@@ -1,0 +1,8 @@
+**/[Bb]in/
+**/[Oo]bj/
+.vs/
+.idea/
+.DS_Store
+*.user
+*.userosscache
+*.sln.doccache

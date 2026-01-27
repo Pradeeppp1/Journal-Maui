@@ -9,31 +9,24 @@ namespace Journal.Services;
 public class ProfileService : IProfileService
 {
     private readonly JournalDbContext _context;
+    private readonly IAuthService _authService;
 
-    public ProfileService(JournalDbContext context)
+    public ProfileService(JournalDbContext context, IAuthService authService)
     {
         _context = context;
+        _authService = authService;
     }
+
+    private int CurrentUserId => _authService.CurrentUserId ?? -1;
 
     public async Task<ServiceResult<ProfileDisplayModel>> GetProfileAsync()
     {
         try
         {
-            var profile = await _context.UserProfiles.FirstOrDefaultAsync();
+            var profile = await _context.UserProfiles.FindAsync(CurrentUserId);
             if (profile == null)
             {
-                // Create a default profile if none exists
-                profile = new UserProfile
-                {
-                    FullName = "User",
-                    Email = "",
-                    Username = "user",
-                    Bio = "New member",
-                    IsDarkMode = false,
-                    IsCompactView = false
-                };
-                _context.UserProfiles.Add(profile);
-                await _context.SaveChangesAsync();
+                return ServiceResult<ProfileDisplayModel>.FailureResult("Profile not found");
             }
 
             return ServiceResult<ProfileDisplayModel>.SuccessResult(MapToDisplayModel(profile));
@@ -48,11 +41,10 @@ public class ProfileService : IProfileService
     {
         try
         {
-            var profile = await _context.UserProfiles.FirstOrDefaultAsync();
+            var profile = await _context.UserProfiles.FindAsync(CurrentUserId);
             if (profile == null)
             {
-                profile = new UserProfile();
-                _context.UserProfiles.Add(profile);
+                return ServiceResult<ProfileDisplayModel>.FailureResult("Profile not found");
             }
 
             profile.FullName = model.FullName;

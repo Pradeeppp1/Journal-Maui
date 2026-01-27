@@ -35,17 +35,25 @@
   border-radius: 50%;
 }
 
+.welcome-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  z-index: 10;
+}
+
 .welcome-content h1 {
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
   letter-spacing: -0.025em;
-    
+  color: #ffffff !important;
 }
 
 .welcome-content p {
   font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .welcome-banner .btn-primary {
@@ -208,13 +216,13 @@
 }
 
 .filter-item:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--secondary-bg);
+  color: var(--text-color);
 }
 
 .filter-item.active {
-  background: #f1f5f9;
-  color: #2563eb;
+  background: var(--secondary-bg);
+  color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -504,5 +512,17 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1.5rem;
+  }
+  
+  .welcome-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .welcome-actions {
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.5rem;
   }
 }

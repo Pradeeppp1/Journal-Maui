@@ -1,300 +1,290 @@
 @page "/Calendar"
- <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>📅 Calendar View</h1>
-            <div class="header-actions">
-                <div class="view-toggle">
-                    <a href="#" class="view-btn">Timeline</a>
-                    <a href="#" class="view-btn active">Calendar</a>
+@using Journal.Services
+@using Journal.Models
+@using System.Globalization
+@inject IJournalService JournalService
+@inject NavigationManager Navigation
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>📅 Calendar View</h1>
+        <div class="header-actions">
+            <div class="view-toggle">
+                <a href="/" class="view-btn">Timeline</a>
+                <a href="/Calendar" class="view-btn active">Calendar</a>
+            </div>
+            <a href="/JournalEntry" class="btn btn-primary">+ New Entry</a>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Calendar Section -->
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <h2 class="month-year">@viewDate.ToString("MMMM yyyy")</h2>
+                <div class="calendar-nav">
+                    <button class="nav-btn" @onclick="PrevMonth">←</button>
+                    <button class="today-btn" @onclick="GoToToday">Today</button>
+                    <button class="nav-btn" @onclick="NextMonth">→</button>
                 </div>
-                <a href="#" class="btn btn-primary">+ New Entry</a>
+            </div>
+
+            <div class="calendar">
+                <div class="calendar-weekdays">
+                    @foreach (var day in Enum.GetNames(typeof(DayOfWeek)))
+                    {
+                        <div class="weekday">@day.Substring(0, 3)</div>
+                    }
+                </div>
+
+                <div class="calendar-days">
+                    @foreach (var day in calendarDays)
+                    {
+                        <div class="calendar-day @(day.IsOtherMonth ? "other-month" : "") @(day.IsToday ? "today" : "") @(day.Date == selectedDate ? "selected" : "") @(day.HasEntries ? "has-entry" : "")"
+                             @onclick="() => SelectDay(day.Date)">
+                            <div class="day-number">@day.Date.Day</div>
+                            @if (day.HasEntries)
+                            {
+                                <div class="day-entries">
+                                    @foreach (var mood in day.Moods)
+                                    {
+                                        <div class="entry-dot @GetMoodClass(mood)"></div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
             </div>
         </div>
 
-        <!-- Main Layout -->
-        <div class="main-layout">
-            <!-- Calendar Section -->
-            <div class="calendar-section">
-                <div class="calendar-header">
-                    @code {
-                        private DateTime currentDate = DateTime.Today;
-
-                        private void GoToToday()
-                        {
-                            currentDate = DateTime.Today;
-                        }
-                    }
-                    <h2 class="month-year">@currentDate.ToString("yyyy MMMM dd")</h2>
-                    <div class="calendar-nav">
-                        <a href="#" class="nav-btn">←</a>
-
-                        <button class="today-btn" @onclick="GoToToday">
-                            Today
-                        </button>
-
-                        <a href="#" class="nav-btn">→</a>
-                    </div>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Selected Day Card -->
+            <div class="sidebar-card">
+                <div class="selected-day-info">
+                    <div class="selected-date">@selectedDate.Day</div>
+                    <div class="selected-day-name">@selectedDate.ToString("dddd, MMMM dd, yyyy")</div>
                 </div>
 
-                <div class="calendar">
-                    <div class="calendar-weekdays">
-                        <div class="weekday">Sun</div>
-                        <div class="weekday">Mon</div>
-                        <div class="weekday">Tue</div>
-                        <div class="weekday">Wed</div>
-                        <div class="weekday">Thu</div>
-                        <div class="weekday">Fri</div>
-                        <div class="weekday">Sat</div>
+                <h3>Entries for this day</h3>
+                <div class="day-entries-list">
+                    @if (selectedDayEntries.Any())
+                    {
+                        @foreach (var entry in selectedDayEntries)
+                        {
+                            <a href="/JournalEntry?id=@entry.Id" class="entry-item">
+                                <div class="entry-time">@entry.CreatedAt.ToString("h:mm tt")</div>
+                                <div class="entry-title-small">@entry.Title</div>
+                                <span class="entry-mood-indicator">@GetMoodEmoji(entry.Mood) @entry.Mood</span>
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <div class="no-entries">No entries for this day</div>
+                        <a href="/JournalEntry" class="btn btn-secondary btn-sm" style="margin-top: 1rem;">Create Entry</a>
+                    }
+                </div>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="sidebar-card">
+                <h3>This Month</h3>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">@monthEntries.Count</div>
+                        <div class="stat-label">Entries</div>
                     </div>
-
-                    <div class="calendar-days">
-                        <!-- Week 1 -->
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">1</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">2</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">3</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">4</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">5</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">6</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">1</div>
-                        </a>
-
-                        <!-- Week 2 -->
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">2</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">3</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">4</div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">5</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-happy"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">6</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">7</div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">8</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-happy"></div>
-                            </div>
-                        </a>
-
-                        <!-- Week 3 -->
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">9</div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">10</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-happy"></div>
-                                <div class="entry-dot mood-calm"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">11</div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">12</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-neutral"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">13</div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">14</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-happy"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">15</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-reflective"></div>
-                            </div>
-                        </a>
-
-                        <!-- Week 4 -->
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">16</div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">17</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-calm"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">18</div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">19</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-neutral"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day has-entry">
-                            <div class="day-number">20</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-happy"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day selected today has-entry">
-                            <div class="day-number">21</div>
-                            <div class="day-entries">
-                                <div class="entry-dot mood-happy"></div>
-                                <div class="entry-dot mood-calm"></div>
-                            </div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">22</div>
-                        </a>
-
-                        <!-- Week 5 -->
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">23</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">24</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">25</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">26</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">27</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">28</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">29</div>
-                        </a>
-
-                        <!-- Week 6 -->
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">30</div>
-                        </a>
-                        <a href="#" class="calendar-day">
-                            <div class="day-number">31</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">1</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">2</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">3</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">4</div>
-                        </a>
-                        <a href="#" class="calendar-day other-month">
-                            <div class="day-number">5</div>
-                        </a>
+                    <div class="stat-box">
+                        <div class="stat-value">@monthStreak</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">@avgWordCount</div>
+                        <div class="stat-label">Avg Words</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">@activityPercent%</div>
+                        <div class="stat-label">Days Active</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Selected Day Card -->
-                <div class="sidebar-card">
-                    <div class="selected-day-info">
-                        <div class="selected-date">21</div>
-                        <div class="selected-day-name">Saturday, December 21, 2025</div>
+            <!-- Mood Legend -->
+            <div class="sidebar-card">
+                <h3>Mood Legend</h3>
+                <div class="mood-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot mood-happy"></div>
+                        <span>😊 Happy</span>
                     </div>
-
-                    <h3>Entries for this day</h3>
-                    <div class="day-entries-list">
-                        <a href="#" class="entry-item">
-                            <div class="entry-time">8:30 PM</div>
-                            <div class="entry-title-small">Evening Reflections</div>
-                            <span class="entry-mood-indicator">😊 Happy</span>
-                        </a>
-                        <a href="#" class="entry-item">
-                            <div class="entry-time">7:15 AM</div>
-                            <div class="entry-title-small">Morning Gratitude</div>
-                            <span class="entry-mood-indicator">😌 Calm</span>
-                        </a>
+                    <div class="legend-item">
+                        <div class="legend-dot mood-calm"></div>
+                        <span>😌 Calm</span>
                     </div>
-                </div>
-
-                <!-- Stats Card -->
-                <div class="sidebar-card">
-                    <h3>This Month</h3>
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-value">18</div>
-                            <div class="stat-label">Entries</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value">12</div>
-                            <div class="stat-label">Streak</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value">2.1k</div>
-                            <div class="stat-label">Avg Words</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value">58%</div>
-                            <div class="stat-label">Days Active</div>
-                        </div>
+                    <div class="legend-item">
+                        <div class="legend-dot mood-neutral"></div>
+                        <span>😐 Neutral</span>
                     </div>
-                </div>
-
-                <!-- Mood Legend -->
-                <div class="sidebar-card">
-                    <h3>Mood Legend</h3>
-                    <div class="mood-legend">
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #28a745;"></div>
-                            <span>😊 Happy</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #17a2b8;"></div>
-                            <span>😌 Calm</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #ffc107;"></div>
-                            <span>😐 Neutral</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #6c757d;"></div>
-                            <span>😔 Reflective</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background: #dc3545;"></div>
-                            <span>😢 Sad</span>
-                        </div>
+                    <div class="legend-item">
+                        <div class="legend-dot mood-reflective"></div>
+                        <span>😔 Reflective</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot mood-sad"></div>
+                        <span>😢 Sad</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+@code {
+    private DateTime viewDate = DateTime.Today;
+    private DateTime selectedDate = DateTime.Today;
+    private List<JournalDisplayModel> monthEntries = new();
+    private List<JournalDisplayModel> selectedDayEntries => monthEntries.Where(e => e.CreatedAt.Date == selectedDate.Date).ToList();
+    private List<CalendarDayModel> calendarDays = new();
+
+    // Stats
+    private int monthStreak = 0;
+    private string avgWordCount = "0";
+    private int activityPercent = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMonthData();
+    }
+
+    private async Task LoadMonthData()
+    {
+        var result = await JournalService.GetAllEntriesAsync(1, 1000); // Get all to filter
+        if (result.Success && result.Data != null)
+        {
+            monthEntries = result.Data.Where(e => e.CreatedAt.Year == viewDate.Year && e.CreatedAt.Month == viewDate.Month).ToList();
+            CalculateStats();
+        }
+        GenerateCalendar();
+    }
+
+    private void GenerateCalendar()
+    {
+        calendarDays.Clear();
+        var firstDayOfMonth = new DateTime(viewDate.Year, viewDate.Month, 1);
+        var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+        // Start from the beginning of the week
+        var startDate = firstDayOfMonth.AddDays(-(int)firstDayOfMonth.DayOfWeek);
+        
+        // Ensure 6 weeks are shown (42 days)
+        for (int i = 0; i < 42; i++)
+        {
+            var date = startDate.AddDays(i);
+            var entriesForDay = monthEntries.Where(e => e.CreatedAt.Date == date.Date).ToList();
+            
+            calendarDays.Add(new CalendarDayModel
+            {
+                Date = date,
+                IsOtherMonth = date.Month != viewDate.Month,
+                IsToday = date.Date == DateTime.Today,
+                HasEntries = entriesForDay.Any(),
+                Moods = entriesForDay.Select(e => e.Mood).Distinct().ToList()
+            });
+        }
+    }
+
+    private async Task PrevMonth()
+    {
+        viewDate = viewDate.AddMonths(-1);
+        await LoadMonthData();
+    }
+
+    private async Task NextMonth()
+    {
+        viewDate = viewDate.AddMonths(1);
+        await LoadMonthData();
+    }
+
+    private async Task GoToToday()
+    {
+        viewDate = DateTime.Today;
+        selectedDate = DateTime.Today;
+        await LoadMonthData();
+    }
+
+    private void SelectDay(DateTime date)
+    {
+        selectedDate = date;
+    }
+
+    private void CalculateStats()
+    {
+        if (!monthEntries.Any())
+        {
+            monthStreak = 0;
+            avgWordCount = "0";
+            activityPercent = 0;
+            return;
+        }
+
+        avgWordCount = Math.Round(monthEntries.Average(e => e.WordCount)).ToString("N0");
+        
+        var daysInMonth = DateTime.DaysInMonth(viewDate.Year, viewDate.Month);
+        var activeDays = monthEntries.Select(e => e.CreatedAt.Date).Distinct().Count();
+        activityPercent = (int)((double)activeDays / daysInMonth * 100);
+
+        // Simple streak for the month
+        int streak = 0;
+        var orderedDates = monthEntries.Select(e => e.CreatedAt.Date).Distinct().OrderByDescending(d => d).ToList();
+        DateTime checkDate = DateTime.Today;
+        if (checkDate.Year == viewDate.Year && checkDate.Month == viewDate.Month)
+        {
+             foreach(var date in orderedDates)
+             {
+                 if (date == checkDate)
+                 {
+                     streak++;
+                     checkDate = checkDate.AddDays(-1);
+                 }
+                 else if (date < checkDate)
+                 {
+                     break;
+                 }
+             }
+        }
+        monthStreak = streak;
+    }
+
+    private string GetMoodClass(string mood) => mood.ToLower() switch
+    {
+        "happy" => "mood-happy",
+        "calm" => "mood-calm",
+        "neutral" => "mood-neutral",
+        "reflective" => "mood-reflective",
+        "sad" => "mood-sad",
+        _ => "mood-neutral"
+    };
+
+    private string GetMoodEmoji(string mood) => mood.ToLower() switch
+    {
+        "happy" => "😊",
+        "calm" => "😌",
+        "neutral" => "😐",
+        "reflective" => "😔",
+        "sad" => "😢",
+        _ => "😐"
+    };
+
+    public class CalendarDayModel
+    {
+        public DateTime Date { get; set; }
+        public bool IsOtherMonth { get; set; }
+        public bool IsToday { get; set; }
+        public bool HasEntries { get; set; }
+        public List<string> Moods { get; set; } = new();
+    }
+}
