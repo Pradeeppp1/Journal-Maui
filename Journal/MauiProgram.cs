@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Journal.Data;
 using Journal.Services;
@@ -29,6 +29,7 @@ public static class MauiProgram
         builder.Services.AddScoped<IProfileService, ProfileService>();
         builder.Services.AddScoped<IThemeService, ThemeService>();
         builder.Services.AddSingleton<ISecurityService, SecurityService>();
+        builder.Services.AddScoped<IFileService, FileService>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();

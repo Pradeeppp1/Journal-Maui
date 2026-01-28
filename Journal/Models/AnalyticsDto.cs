@@ -12,6 +12,8 @@ public class AnalyticsDto
     public List<DateTime> MissedDays { get; set; } = new();
     public Dictionary<string, int> TagUsage { get; set; } = new();
     public List<WordCountTrendPoint> WordCountTrends { get; set; } = new();
+    public Dictionary<string, int> ActivityByDayOfWeek { get; set; } = new();
+    public Dictionary<int, int> ActivityByHour { get; set; } = new();
 }
 
 public class WordCountTrendPoint

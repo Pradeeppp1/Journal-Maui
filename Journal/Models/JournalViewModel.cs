@@ -12,8 +12,8 @@ public class JournalViewModel
     public string Content { get; set; } = string.Empty;
 
     public string Mood { get; set; } = "Neutral";
-
     public string SecondaryMoods { get; set; } = string.Empty;
-
     public string Tags { get; set; } = string.Empty;
+
+
 }

@@ -12,10 +12,11 @@ public interface IJournalService
     Task<ServiceResult<bool>> DeleteEntryAsync(int id);
     Task<ServiceResult<List<JournalDisplayModel>>> SearchEntriesAsync(string searchTerm);
     Task<ServiceResult<List<JournalDisplayModel>>> GetEntriesByMoodAsync(string mood);
+    Task<ServiceResult<List<JournalDisplayModel>>> GetEntriesByDateRangeAsync(DateTime startDate, DateTime endDate);
     Task<ServiceResult<int>> GetTotalEntriesCountAsync();
     Task<ServiceResult<int>> GetCurrentStreakAsync();
     Task<ServiceResult<int>> GetThisMonthEntriesCountAsync();
-    Task<ServiceResult<bool>> HasEntryTodayAsync();
     Task<ServiceResult<AnalyticsDto>> GetAnalyticsAsync(DateTime? startDate, DateTime? endDate);
     Task<ServiceResult<byte[]>> ExportEntriesToPdfAsync(DateTime startDate, DateTime endDate);
+    Task<ServiceResult<bool>> HasEntryTodayAsync();
 }

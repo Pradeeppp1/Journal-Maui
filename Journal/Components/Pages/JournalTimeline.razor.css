@@ -136,6 +136,26 @@
     border-color: #cbd5e1;
 }
 
+.custom-date-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.custom-date-range input {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+}
+
+.custom-date-range span {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
 /* Timeline */
 .timeline-container {
     position: relative;

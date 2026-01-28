@@ -53,7 +53,17 @@
             <option value="Last7Days">Last 7 Days</option>
             <option value="ThisMonth">This Month</option>
             <option value="ThisYear">This Year</option>
+            <option value="Custom">Custom Range</option>
         </select>
+
+        @if (dateFilter == "Custom")
+        {
+            <div class="custom-date-range">
+                <input type="date" @bind="viewStartDate" @bind:after="ApplyFilters" />
+                <span>to</span>
+                <input type="date" @bind="viewEndDate" @bind:after="ApplyFilters" />
+            </div>
+        }
     </div>
 
     <!-- Timeline Container -->
@@ -178,6 +188,8 @@
     private string selectedTag = string.Empty;
     private string dateFilter = "AllTime";
     private HashSet<string> availableTags = new();
+    private DateTime viewStartDate = DateTime.Today.AddDays(-7);
+    private DateTime viewEndDate = DateTime.Today;
 
     // Export
     private bool showExportModal = false;
@@ -267,6 +279,7 @@
             "Last7Days" => query.Where(e => e.CreatedAt.Date >= now.AddDays(-7)),
             "ThisMonth" => query.Where(e => e.CreatedAt.Year == now.Year && e.CreatedAt.Month == now.Month),
             "ThisYear" => query.Where(e => e.CreatedAt.Year == now.Year),
+            "Custom" => query.Where(e => e.CreatedAt.Date >= viewStartDate.Date && e.CreatedAt.Date <= viewEndDate.Date),
             _ => query
         };
 

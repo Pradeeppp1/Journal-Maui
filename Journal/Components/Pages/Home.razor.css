@@ -262,6 +262,27 @@
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
+.custom-date-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.custom-date-range input {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.custom-date-range span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
 .entries-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));

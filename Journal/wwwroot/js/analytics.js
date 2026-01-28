@@ -135,23 +135,109 @@ window.renderLineChart = (elementId, dates, values, title) => {
   chart.render();
 };
 
-window.generatePDF = async (htmlContent) => {
-  const element = document.createElement("div");
-  element.innerHTML = htmlContent;
-  element.style.padding = "40px";
-  element.style.fontFamily = "Inter, sans-serif";
-
-  const opt = {
-    margin: 10,
-    filename: "journal.pdf",
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+window.renderAreaChart = (elementId, dates, values, title) => {
+  const options = {
+    series: [{
+      name: 'Words',
+      data: values
+    }],
+    chart: {
+      type: 'area',
+      height: 350,
+      zoom: {
+        enabled: false
+      },
+      toolbar: {
+        show: false
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      curve: 'smooth'
+    },
+    title: {
+      text: title,
+      align: 'left',
+      style: {
+        fontSize: '18px',
+        fontWeight: '600'
+      }
+    },
+    xaxis: {
+      type: 'datetime',
+      categories: dates
+    },
+    yaxis: {
+      opposite: true
+    },
+    legend: {
+      horizontalAlign: 'left'
+    },
+    colors: ['#63b3ed'],
+    fill: {
+      type: 'gradient',
+      gradient: {
+        shadeIntensity: 1,
+        opacityFrom: 0.7,
+        opacityTo: 0.9,
+        stops: [0, 90, 100]
+      }
+    }
   };
 
-  const pdfBase64 = await html2pdf()
-    .from(element)
-    .set(opt)
-    .outputPdf("datauristring");
-  return pdfBase64.split(",")[1]; // Return only the base64 part
+  const chart = new ApexCharts(document.getElementById(elementId), options);
+  chart.render();
+};
+
+window.renderColumnChart = (elementId, labels, series, title, color = '#4fd1c5') => {
+  const options = {
+    series: [{
+      name: 'Count',
+      data: series
+    }],
+    chart: {
+      type: 'bar',
+      height: 350,
+      toolbar: {
+        show: false
+      }
+    },
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+        columnWidth: '60%',
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    xaxis: {
+      categories: labels,
+    },
+    title: {
+      text: title,
+      align: 'center',
+      style: {
+        fontSize: '18px',
+        fontWeight: '600'
+      }
+    },
+    colors: [color]
+  };
+
+  const chart = new ApexCharts(document.getElementById(elementId), options);
+  chart.render();
+};
+
+window.generatePDF = async (htmlContent) => {
+  try {
+    // For MAUI, we'll use a simpler approach - just return the HTML
+    // The C# side can handle the actual PDF generation
+    return btoa(unescape(encodeURIComponent(htmlContent)));
+  } catch (error) {
+    console.error("PDF generation error:", error);
+    throw error;
+  }
 };

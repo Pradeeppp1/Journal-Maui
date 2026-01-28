@@ -206,6 +206,35 @@ public class JournalService : IJournalService
         {
             return ServiceResult<List<JournalDisplayModel>>.FailureResult(ex.Message);
         }
+
+    }
+
+    public async Task<ServiceResult<List<JournalDisplayModel>>> GetEntriesByDateRangeAsync(DateTime startDate, DateTime endDate)
+    {
+        try
+        {
+            var entries = await _context.JournalEntries
+                .Where(e => e.UserId == CurrentUserId && e.CreatedAt.Date >= startDate.Date && e.CreatedAt.Date <= endDate.Date)
+                .OrderByDescending(e => e.CreatedAt)
+                .Select(e => new JournalDisplayModel
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Content = e.Content,
+                    CreatedAt = e.CreatedAt,
+                    Mood = e.Mood,
+                    SecondaryMoods = e.SecondaryMoods,
+                    Tags = e.Tags,
+                    WordCount = e.WordCount,
+                    CharacterCount = e.CharacterCount
+                })
+                .ToListAsync();
+            return ServiceResult<List<JournalDisplayModel>>.SuccessResult(entries);
+        }
+        catch (Exception ex)
+        {
+            return ServiceResult<List<JournalDisplayModel>>.FailureResult(ex.Message);
+        }
     }
 
     public async Task<ServiceResult<int>> GetTotalEntriesCountAsync()
@@ -396,6 +425,16 @@ public class JournalService : IJournalService
                 })
                 .OrderBy(g => g.Date)
                 .ToList();
+
+            // Activity by Day of Week
+            analytics.ActivityByDayOfWeek = entries
+                .GroupBy(e => e.CreatedAt.DayOfWeek.ToString())
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            // Activity by Hour
+            analytics.ActivityByHour = entries
+                .GroupBy(e => e.CreatedAt.Hour)
+                .ToDictionary(g => g.Key, g => g.Count());
 
             return ServiceResult<AnalyticsDto>.SuccessResult(analytics);
         }

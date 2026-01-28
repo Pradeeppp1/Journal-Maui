@@ -4,6 +4,8 @@
 @using System.Globalization
 @inject IJournalService JournalService
 @inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@inject IFileService FileService
 
 <div class="container">
     <!-- Header -->
@@ -14,6 +16,9 @@
                 <a href="/" class="view-btn">Timeline</a>
                 <a href="/Calendar" class="view-btn active">Calendar</a>
             </div>
+            <button class="btn btn-secondary" @onclick="ExportToPdf" style="margin-right: 0.5rem;">
+                <i class="bi bi-file-earmark-pdf"></i> Export
+            </button>
             <a href="/JournalEntry" class="btn btn-primary">+ New Entry</a>
         </div>
     </div>
@@ -254,9 +259,61 @@
                  {
                      break;
                  }
+                 else if (date < checkDate)
+                 {
+                     break;
+                 }
              }
         }
         monthStreak = streak;
+    }
+
+    private async Task ExportToPdf()
+    {
+        try
+        {
+            if (!monthEntries.Any())
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "No entries to export for this month.");
+                return;
+            }
+
+            var sb = new System.Text.StringBuilder();
+            sb.Append("<div style='max-width: 800px; margin: 0 auto;'>");
+            sb.Append($"<h1 style='color: #1e293b; text-align: center; margin-bottom: 20px;'>Journal - {viewDate:MMMM yyyy}</h1>");
+            sb.Append($"<p style='text-align: center; color: #64748b; margin-bottom: 40px;'>Total Entries: {monthEntries.Count}</p>");
+
+            foreach (var e in monthEntries.OrderBy(e => e.CreatedAt))
+            {
+                sb.Append("<div style='margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px;'>");
+                sb.Append("<div style='display: flex; justify-content: space-between; margin-bottom: 10px;'>");
+                sb.Append($"<span style='color: #94a3b8; font-weight: 600;'>{e.CreatedAt:dddd, MMM dd}</span>");
+                sb.Append($"<span style='background: #f1f5f9; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem;'>{GetMoodEmoji(e.Mood)} {e.Mood}</span>");
+                sb.Append("</div>");
+                sb.Append($"<h2 style='color: #1e293b; margin: 0 0 10px 0;'>{e.Title}</h2>");
+                sb.Append($"<div style='color: #475569; line-height: 1.5; white-space: pre-wrap;'>{e.Content}</div>");
+
+                if (!string.IsNullOrEmpty(e.Tags))
+                {
+                    sb.Append("<div style='margin-top: 10px;'>");
+                    foreach (var tag in e.Tags.Split(','))
+                    {
+                        sb.Append($"<span style='margin-right: 8px; color: #3b82f6; font-size: 0.85rem;'>#{tag.Trim()}</span>");
+                    }
+                    sb.Append("</div>");
+                }
+                sb.Append("</div>");
+            }
+            sb.Append("</div>");
+
+            var fileName = $"Journal_{viewDate:yyyy_MM}.html";
+            var filePath = await FileService.SaveHtmlFileAsync(sb.ToString(), fileName);
+            await JSRuntime.InvokeVoidAsync("alert", $"Export successful! File saved to:\n{filePath}");
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Export failed: {ex.Message}");
+        }
     }
 
     private string GetMoodClass(string mood) => mood.ToLower() switch
