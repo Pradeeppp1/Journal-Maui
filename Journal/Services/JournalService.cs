@@ -431,33 +431,10 @@ public class JournalService : IJournalService
                 .GroupBy(e => e.CreatedAt.DayOfWeek.ToString())
                 .ToDictionary(g => g.Key, g => g.Count());
 
+            // Activity by Hour
             analytics.ActivityByHour = entries
                 .GroupBy(e => e.CreatedAt.Hour)
                 .ToDictionary(g => g.Key, g => g.Count());
-
-            // Activity Heatmap (Day of Week vs Week of Month)
-            var rangeStart = startDate ?? (entries.Any() ? entries.Min(e => e.CreatedAt).Date : DateTime.Today.AddDays(-30));
-            var rangeEnd = endDate ?? DateTime.Today;
-            
-            var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-            foreach (var day in days)
-            {
-                var dayPoints = new HeatMapPoint { Name = day };
-                // Group by week (simply divide range into 4-5 weeks for visibility)
-                for (int w = 0; w < 5; w++)
-                {
-                    var weekStart = rangeStart.AddDays(w * 7);
-                    var weekEnd = weekStart.AddDays(6);
-                    if (weekStart > rangeEnd) break;
-
-                    int count = entries.Count(e => e.CreatedAt.DayOfWeek.ToString() == day && 
-                                                 e.CreatedAt.Date >= weekStart.Date && 
-                                                 e.CreatedAt.Date <= weekEnd.Date);
-                    
-                    dayPoints.Data.Add(new HeatMapData { X = $"W{w+1}", Y = count });
-                }
-                analytics.ActivityHeatMap.Add(dayPoints);
-            }
 
             return ServiceResult<AnalyticsDto>.SuccessResult(analytics);
         }

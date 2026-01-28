@@ -14,19 +14,6 @@ public class AnalyticsDto
     public List<WordCountTrendPoint> WordCountTrends { get; set; } = new();
     public Dictionary<string, int> ActivityByDayOfWeek { get; set; } = new();
     public Dictionary<int, int> ActivityByHour { get; set; } = new();
-    public List<HeatMapPoint> ActivityHeatMap { get; set; } = new();
-}
-
-public class HeatMapPoint
-{
-    public string Name { get; set; } = string.Empty; // Weekday
-    public List<HeatMapData> Data { get; set; } = new();
-}
-
-public class HeatMapData
-{
-    public string X { get; set; } = string.Empty; // Week of Month
-    public int Y { get; set; } // Entry Count
 }
 
 public class WordCountTrendPoint

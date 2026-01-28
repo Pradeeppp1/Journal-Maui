@@ -86,12 +86,6 @@
                 <div class="chart-card">
                     <div id="hourChart"></div>
                 </div>
-                <div class="chart-card large">
-                    <div id="activityHeatMap"></div>
-                </div>
-                <div class="chart-card">
-                    <div id="moodRadarChart"></div>
-                </div>
             </div>
         </div>
     }
@@ -312,23 +306,6 @@
                 values, 
                 "Writing Time (Hourly)",
                 "#f6ad55");
-        }
-
-        // Activity Heatmap
-        if (analytics.ActivityHeatMap.Any())
-        {
-            await JSRuntime.InvokeVoidAsync("renderHeatMap", "activityHeatMap", 
-                analytics.ActivityHeatMap, 
-                "Activity Intensity (Weekly)");
-        }
-
-        // Mood Radar (Intensity)
-        if (analytics.MoodDistribution.Any())
-        {
-            await JSRuntime.InvokeVoidAsync("renderRadarChart", "moodRadarChart",
-                analytics.MoodDistribution.Keys.ToList(),
-                analytics.MoodDistribution.Values.ToList(),
-                "Mood Balance");
         }
     }
 

@@ -11,7 +11,7 @@ window.initializeQuill = (elementId, initialContent) => {
                 ['bold', 'italic', 'underline', 'strike'],
                 ['blockquote', 'code-block'],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                ['link', 'image'],
+                ['link'],
                 ['clean']
             ]
         }
