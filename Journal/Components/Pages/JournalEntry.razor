@@ -33,10 +33,10 @@
             <div class="meta-item">
                 <label>Primary Mood (Required)</label>
                 <div class="mood-selector">
-                    @foreach (var mood in moods)
+                    @foreach (var mood in primaryMoods)
                     {
                         <div class="mood-option @(entry.Mood == mood.Name ? "selected" : "")" 
-                             @onclick="() => SelectMood(mood.Name)">
+                             @onclick="() => SelectPrimaryMood(mood.Name)">
                             <span class="mood-emoji">@mood.Emoji</span>
                             <span class="mood-label">@mood.Name</span>
                         </div>
@@ -44,21 +44,23 @@
                 </div>
             </div>
 
-            <div class="meta-item">
-                <label>Secondary Moods (Optional - pick up to 2)</label>
-                <div class="mood-selector secondary">
-                    @foreach (var mood in moods)
-                    {
-                        var isSelected = secondaryMoods.Contains(mood.Name);
-                        var isPrimary = entry.Mood == mood.Name;
-                        <div class="mood-option @(isSelected ? "selected" : "") @(isPrimary ? "disabled" : "")" 
-                             @onclick="() => ToggleSecondaryMood(mood.Name)">
-                            <span class="mood-emoji">@mood.Emoji</span>
-                            <span class="mood-label">@mood.Name</span>
-                        </div>
-                    }
+            @if (!string.IsNullOrEmpty(entry.Mood))
+            {
+                <div class="meta-item">
+                    <label>Secondary Moods (Optional - pick up to 2)</label>
+                    <div class="mood-selector secondary">
+                        @foreach (var subMood in GetSubMoodsForPrimary(entry.Mood))
+                        {
+                            var isSelected = secondaryMoods.Contains(subMood.Name);
+                            <div class="mood-option @(isSelected ? "selected" : "")" 
+                                 @onclick="() => ToggleSecondaryMood(subMood.Name)">
+                                <span class="mood-emoji">@subMood.Emoji</span>
+                                <span class="mood-label">@subMood.Name</span>
+                            </div>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
         </div>
 
         <!-- Title Section -->
@@ -97,8 +99,22 @@
                     </div>
                 }
             </div>
+
+            <div class="prebuilt-tags">
+                <span class="suggestion-label">Suggestions:</span>
+                <div class="tag-suggestions">
+                    @foreach (var tag in preBuiltTags)
+                    {
+                        var isAdded = tags.Contains(tag, StringComparer.OrdinalIgnoreCase);
+                        <span class="tag-chip @(isAdded ? "added" : "")" @onclick="() => ToggleTag(tag)">
+                            @tag
+                        </span>
+                    }
+                </div>
+            </div>
+
             <div class="tag-input-wrapper">
-                <input type="text" class="tag-input" placeholder="Add a tag..." 
+                <input type="text" class="tag-input" placeholder="Add custom tag..." 
                        @bind="newTag" @bind:event="oninput" @onkeypress="OnTagKeyPress" />
                 <button class="add-tag-btn" @onclick="AddTag">Add Tag</button>
             </div>
@@ -123,13 +139,27 @@
     private System.Threading.Timer? autoSaveTimer;
     private DotNetObjectReference<JournalEntry>? objRef;
 
-    private readonly List<(string Name, string Emoji)> moods = new()
+    private readonly List<(string Name, string Emoji)> primaryMoods = new()
     {
-        ("Happy", "😊"),
-        ("Calm", "😌"),
+        ("Positive", "😊"),
         ("Neutral", "😐"),
-        ("Reflective", "😔"),
-        ("Sad", "😢")
+        ("Negative", "😟")
+    };
+
+    private readonly Dictionary<string, List<(string Name, string Emoji)>> subMoodsMap = new()
+    {
+        ["Positive"] = new() 
+        { 
+            ("Happy", "😊"), ("Excited", "🤩"), ("Relaxed", "😌"), ("Grateful", "🙏"), ("Confident", "😎") 
+        },
+        ["Neutral"] = new() 
+        { 
+            ("Calm", "🧘"), ("Thoughtful", "🤔"), ("Curious", "🧐"), ("Nostalgic", "✉️"), ("Bored", "😑") 
+        },
+        ["Negative"] = new() 
+        { 
+            ("Sad", "😢"), ("Angry", "😠"), ("Stressed", "😫"), ("Lonely", "👤"), ("Anxious", "😰") 
+        }
     };
 
     private readonly List<string> prompts = new()
@@ -139,6 +169,15 @@
         "A challenge I overcame",
         "Something I learned today",
         "My goals for tomorrow"
+    };
+
+    private readonly List<string> preBuiltTags = new()
+    {
+        "Work", "Career", "Studies", "Family", "Friends", "Relationships",
+        "Health", "Fitness", "Personal Growth", "Self-care", "Hobbies", "Travel",
+        "Nature", "Finance", "Spirituality", "Birthday", "Holiday", "Vacation",
+        "Celebration", "Exercise", "Reading", "Writing", "Cooking", "Meditation",
+        "Yoga", "Music", "Shopping", "Parenting", "Projects", "Planning", "Reflection"
     };
 
     protected override async Task OnInitializedAsync()
@@ -334,22 +373,28 @@
     private async Task PreviewEntry()
     {
         var markdown = await JSRuntime.InvokeAsync<string>("getQuillMarkdown");
-        var preview = $"Title: {entry.Title}\n\nDate: {entry.CreatedAt:yyyy-MM-dd HH:mm}\nMood: {entry.Mood}\nTags: {string.Join(", ", tags)}\n\n--- MARKDOWN ---\n\n{markdown}";
+        var preview = $"Title: {entry.Title}\n\nDate: {entry.CreatedAt:yyyy-MM-dd HH:mm}\nMood: {entry.Mood}\nSub-Moods: {string.Join(", ", secondaryMoods)}\nTags: {string.Join(", ", tags)}\n\n--- MARKDOWN ---\n\n{markdown}";
         await JSRuntime.InvokeVoidAsync("alert", preview);
     }
 
-    private async Task SelectMood(string moodName)
+    private void SelectPrimaryMood(string moodName)
     {
-        entry.Mood = moodName;
-        // Primary mood cannot be a secondary mood
-        secondaryMoods.Remove(moodName);
-        OnContentChanged();
+        if (entry.Mood != moodName)
+        {
+            entry.Mood = moodName;
+            secondaryMoods.Clear(); // Reset secondary moods when primary changes
+            OnContentChanged();
+        }
+    }
+
+    private List<(string Name, string Emoji)> GetSubMoodsForPrimary(string primaryMood)
+    {
+        if (string.IsNullOrEmpty(primaryMood)) return new();
+        return subMoodsMap.ContainsKey(primaryMood) ? subMoodsMap[primaryMood] : new();
     }
 
     private void ToggleSecondaryMood(string moodName)
     {
-        if (entry.Mood == moodName) return; // Cannot pick primary as secondary
-
         if (secondaryMoods.Contains(moodName))
         {
             secondaryMoods.Remove(moodName);
@@ -357,12 +402,6 @@
         else if (secondaryMoods.Count < 2)
         {
             secondaryMoods.Add(moodName);
-        }
-        else
-        {
-            // Replace the oldest one or just ignore? Requirement says "up to two"
-            // Let's just ignore if already at 2.
-            return;
         }
         OnContentChanged();
     }
@@ -387,6 +426,19 @@
             newTag = string.Empty;
             OnContentChanged();
         }
+    }
+
+    private void ToggleTag(string tag)
+    {
+        if (tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
+        {
+            tags.RemoveAll(t => t.Equals(tag, StringComparison.OrdinalIgnoreCase));
+        }
+        else
+        {
+            tags.Add(tag);
+        }
+        OnContentChanged();
     }
 
     private void RemoveTag(string tag)

@@ -117,17 +117,17 @@
                     <span>All Entries</span>
                     <span>@totalEntries</span>
                 </div>
-                <div class="filter-item @(selectedMood == "Happy" ? "active" : "")" @onclick='() => FilterByMood("Happy")'>
-                    <span>😊 Happy</span>
-                    <span>@GetMoodCount("Happy")</span>
+                <div class="filter-item @(selectedMood == "Positive" ? "active" : "")" @onclick='() => FilterByMood("Positive")'>
+                    <span>😊 Positive</span>
+                    <span>@GetMoodCount("Positive")</span>
                 </div>
                 <div class="filter-item @(selectedMood == "Neutral" ? "active" : "")" @onclick='() => FilterByMood("Neutral")'>
                     <span>😐 Neutral</span>
                     <span>@GetMoodCount("Neutral")</span>
                 </div>
-                <div class="filter-item @(selectedMood == "Reflective" ? "active" : "")" @onclick='() => FilterByMood("Reflective")'>
-                    <span>😔 Reflective</span>
-                    <span>@GetMoodCount("Reflective")</span>
+                <div class="filter-item @(selectedMood == "Negative" ? "active" : "")" @onclick='() => FilterByMood("Negative")'>
+                    <span>😟 Negative</span>
+                    <span>@GetMoodCount("Negative")</span>
                 </div>
             </div>
         </aside>
@@ -155,7 +155,6 @@
                     <button class="btn btn-outline-secondary" @onclick="ExportCurrentViewToPdf" title="Export current view to PDF">
                         <i class="bi bi-file-earmark-pdf"></i>
                     </button>
-                    <input type="text" class="search-bar" placeholder="Search entries..." @bind="searchTerm" @bind:after="ApplyFilters" />
                 </div>
             </div>
 
@@ -589,11 +588,9 @@
     {
         return mood switch
         {
-            "Happy" => "😊",
-            "Calm" => "😌",
+            "Positive" => "😊",
             "Neutral" => "😐",
-            "Reflective" => "😔",
-            "Sad" => "😢",
+            "Negative" => "�",
             _ => "📝"
         };
     }

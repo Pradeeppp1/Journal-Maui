@@ -318,21 +318,17 @@
 
     private string GetMoodClass(string mood) => mood.ToLower() switch
     {
-        "happy" => "mood-happy",
-        "calm" => "mood-calm",
+        "positive" => "mood-happy",
         "neutral" => "mood-neutral",
-        "reflective" => "mood-reflective",
-        "sad" => "mood-sad",
+        "negative" => "mood-sad",
         _ => "mood-neutral"
     };
 
     private string GetMoodEmoji(string mood) => mood.ToLower() switch
     {
-        "happy" => "😊",
-        "calm" => "😌",
+        "positive" => "😊",
         "neutral" => "😐",
-        "reflective" => "😔",
-        "sad" => "😢",
+        "negative" => "😟",
         _ => "😐"
     };
 
